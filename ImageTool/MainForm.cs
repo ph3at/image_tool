@@ -44,5 +44,11 @@ namespace ImageTool
         {
             if(outputView != null) outputView.Refresh();
         }
+
+        private void buttonChangeBG_Click(object sender, EventArgs e)
+        {
+            controller.ChangeBG();
+            Refresh();
+        }
     }
 }

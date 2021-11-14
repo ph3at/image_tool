@@ -219,6 +219,8 @@ namespace ImageTool
 
         internal void DrawImage(Image image, Graphics graphics)
         {
+            DrawBG(graphics);
+
             graphics.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighSpeed;
 
             RectangleF sourceRect = new RectangleF(0, 0, image.Width, image.Height);
@@ -298,7 +300,7 @@ namespace ImageTool
             if (outputImage == null) return;
             using (Graphics g = Graphics.FromImage(outputImage))
             {
-                g.Clear(Color.Transparent);
+                DrawBG(g);
                 if (baseImage != null) g.DrawImage(baseImage, 0, 0, TargetW, TargetH);
                 foreach(var sel in selectionRects)
                 {
@@ -322,7 +324,42 @@ namespace ImageTool
         internal void DrawSelectionRect(Rectangle selectionRect, Graphics g)
         {
             var rect = ImageToMouse(selectionRect);
-            g.DrawRectangle(Pens.LightGreen, rect);
+            rect.Inflate(1, 1);
+            g.DrawRectangle(Pens.White, rect);
+            rect.Inflate(1, 1);
+            g.DrawRectangle(Pens.Black, rect);
+        }
+
+        internal void DrawBG(Graphics g)
+        {
+            Brush brush = new HatchBrush(HatchStyle.LargeCheckerBoard, Color.LightGray, Color.DarkGray);
+            switch (currentBG)
+            {
+                case BG.Black: brush = Brushes.Black; break;
+                case BG.White: brush = Brushes.White; break;
+                case BG.Checker: break;
+                case BG.Pink: brush = Brushes.DeepPink; break;
+            }
+            g.FillRectangle(brush, g.ClipBounds);
+        }
+
+        enum BG
+        {
+            Black,
+            White,
+            Checker,
+            Pink
+        };
+        BG currentBG = BG.Checker;
+        internal void ChangeBG()
+        {
+            switch(currentBG)
+            {
+                case BG.Black: currentBG = BG.White; break;
+                case BG.White: currentBG = BG.Checker; break;
+                case BG.Checker: currentBG = BG.Pink; break;
+                case BG.Pink: currentBG = BG.Black; break;
+            }
         }
     }
 }

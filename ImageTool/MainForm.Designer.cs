@@ -31,6 +31,7 @@
             this.flowLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.buttonChangeBG = new System.Windows.Forms.Button();
             this.statusStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -39,7 +40,7 @@
             this.flowLayoutPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.flowLayoutPanel.Location = new System.Drawing.Point(0, 0);
+            this.flowLayoutPanel.Location = new System.Drawing.Point(0, 32);
             this.flowLayoutPanel.Name = "flowLayoutPanel";
             this.flowLayoutPanel.Size = new System.Drawing.Size(1584, 600);
             this.flowLayoutPanel.TabIndex = 0;
@@ -61,11 +62,22 @@
             this.toolStripStatusLabel.Name = "toolStripStatusLabel";
             this.toolStripStatusLabel.Size = new System.Drawing.Size(0, 17);
             // 
+            // buttonChangeBG
+            // 
+            this.buttonChangeBG.Location = new System.Drawing.Point(12, 3);
+            this.buttonChangeBG.Name = "buttonChangeBG";
+            this.buttonChangeBG.Size = new System.Drawing.Size(75, 23);
+            this.buttonChangeBG.TabIndex = 2;
+            this.buttonChangeBG.Text = "Change BG";
+            this.buttonChangeBG.UseVisualStyleBackColor = true;
+            this.buttonChangeBG.Click += new System.EventHandler(this.buttonChangeBG_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1584, 761);
+            this.Controls.Add(this.buttonChangeBG);
             this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.flowLayoutPanel);
             this.Name = "MainForm";
@@ -83,5 +95,6 @@
         private FlowLayoutPanel flowLayoutPanel;
         private StatusStrip statusStrip;
         private ToolStripStatusLabel toolStripStatusLabel;
+        private Button buttonChangeBG;
     }
 }
