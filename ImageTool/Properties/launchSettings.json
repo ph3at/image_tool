@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ImageTool": {
+      "commandName": "Project",
+      "workingDirectory": "C:\\dev\\ph3\\image_tool"
+    }
+  }
+}
