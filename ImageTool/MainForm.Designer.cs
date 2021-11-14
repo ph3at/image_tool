@@ -32,6 +32,7 @@
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.buttonChangeBG = new System.Windows.Forms.Button();
+            this.buttonSaveOutput = new System.Windows.Forms.Button();
             this.statusStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -72,11 +73,22 @@
             this.buttonChangeBG.UseVisualStyleBackColor = true;
             this.buttonChangeBG.Click += new System.EventHandler(this.buttonChangeBG_Click);
             // 
+            // buttonSaveOutput
+            // 
+            this.buttonSaveOutput.Location = new System.Drawing.Point(93, 3);
+            this.buttonSaveOutput.Name = "buttonSaveOutput";
+            this.buttonSaveOutput.Size = new System.Drawing.Size(106, 23);
+            this.buttonSaveOutput.TabIndex = 3;
+            this.buttonSaveOutput.Text = "Save Output";
+            this.buttonSaveOutput.UseVisualStyleBackColor = true;
+            this.buttonSaveOutput.Click += new System.EventHandler(this.buttonSaveOutput_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1584, 761);
+            this.Controls.Add(this.buttonSaveOutput);
             this.Controls.Add(this.buttonChangeBG);
             this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.flowLayoutPanel);
@@ -96,5 +108,6 @@
         private StatusStrip statusStrip;
         private ToolStripStatusLabel toolStripStatusLabel;
         private Button buttonChangeBG;
+        private Button buttonSaveOutput;
     }
 }

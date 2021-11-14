@@ -50,5 +50,10 @@ namespace ImageTool
             controller.ChangeBG();
             Refresh();
         }
+
+        private void buttonSaveOutput_Click(object sender, EventArgs e)
+        {
+            controller.OutputImage.Save(folderlist[curFolder] + "/output.png");
+        }
     }
 }

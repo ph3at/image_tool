@@ -12,6 +12,7 @@ using System.Windows.Forms;
 namespace ImageTool
 {
     using ExtensionMethods;
+    using System.Diagnostics;
     using System.Drawing.Drawing2D;
     using System.Numerics;
 
@@ -184,6 +185,12 @@ namespace ImageTool
             }
         }
         Bitmap? outputImage;
+        public Bitmap OutputImage {
+            get {
+                Debug.Assert(outputImage != null);
+                return outputImage;
+            }
+        }
 
         private Point lastMouseImageCoords = new Point(0, 0);
         public Point LastMouseImageCoords { get { return lastMouseImageCoords; } }
@@ -300,7 +307,7 @@ namespace ImageTool
             if (outputImage == null) return;
             using (Graphics g = Graphics.FromImage(outputImage))
             {
-                DrawBG(g);
+                g.Clear(Color.Transparent);
                 if (baseImage != null) g.DrawImage(baseImage, 0, 0, TargetW, TargetH);
                 foreach(var sel in selectionRects)
                 {
