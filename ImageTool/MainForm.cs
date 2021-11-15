@@ -28,6 +28,8 @@ namespace ImageTool
             outputView = new ImageView(controller);
             flowLayoutPanel.Controls.Add(outputView);
             flowLayoutPanel.Update();
+
+            MainForm_Resize(this, new EventArgs());
         }
 
         private void statusStrip_Paint(object sender, PaintEventArgs e)
@@ -54,6 +56,35 @@ namespace ImageTool
         private void buttonSaveOutput_Click(object sender, EventArgs e)
         {
             controller.OutputImage.Save(folderlist[curFolder] + "/output.png");
+        }
+
+        private void MainForm_Resize(object sender, EventArgs e)
+        {
+            flowLayoutPanel.SuspendLayout();
+
+            const int NUM_ROWS = 2; // fix to two rows for now
+            const int SPACING = 5;
+
+            var num = flowLayoutPanel.Controls.Count;
+            var numPerRow = (int)Math.Ceiling(num / (float)NUM_ROWS);
+            foreach (Control c in flowLayoutPanel.Controls)
+            {
+                c.Width = (flowLayoutPanel.Width / numPerRow) - SPACING*2;
+                c.Height = (flowLayoutPanel.Height / NUM_ROWS) - SPACING*2;
+                c.Margin = new Padding(SPACING);
+            }
+            if(numPerRow*NUM_ROWS != num && outputView != null)
+            {
+                outputView.Width *= 2;
+                outputView.Width += SPACING*2;
+            }
+
+            flowLayoutPanel.ResumeLayout();
+        }
+
+        private void MainForm_ResizeEnd(object sender, EventArgs e)
+        {
+            Refresh();
         }
     }
 }

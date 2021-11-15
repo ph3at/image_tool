@@ -18,23 +18,25 @@ namespace ImageTool
 
     public partial class ImageView : UserControl
     {
-        string imageFn = "";
-        Image image;
-        ImageController controller;
+        readonly string imageFn = "";
+        readonly Image image;
+        readonly ImageController controller;
 
-        Point dragStartLoc = Point.Empty;
+        Point? dragStartLoc = null;
 
-        Point selectStartLoc = Point.Empty;
-        Point selectCurLoc = Point.Empty;
+        Point? selectStartLoc = null;
+        Point? selectCurLoc = null;
 
         public Rectangle SelectionRect
         {
             get
             {
-                var startX = Math.Min(selectStartLoc.X, selectCurLoc.X);
-                var startY = Math.Min(selectStartLoc.Y, selectCurLoc.Y);
-                var w = Math.Abs(selectStartLoc.X - selectCurLoc.X);
-                var h = Math.Abs(selectStartLoc.Y - selectCurLoc.Y);
+                if (selectCurLoc == null) return Rectangle.Empty;
+                if (selectStartLoc == null) return Rectangle.Empty;
+                var startX = Math.Min(selectStartLoc.Value.X, selectCurLoc.Value.X);
+                var startY = Math.Min(selectStartLoc.Value.Y, selectCurLoc.Value.Y);
+                var w = Math.Abs(selectStartLoc.Value.X - selectCurLoc.Value.X);
+                var h = Math.Abs(selectStartLoc.Value.Y - selectCurLoc.Value.Y);
                 return new Rectangle(startX, startY, w, h);
             }
         }
@@ -92,8 +94,8 @@ namespace ImageTool
             {
                 ControlPaint.DrawBorder(e.Graphics, panelImg.ClientRectangle, Color.Blue, ButtonBorderStyle.Solid);
             }
-            controller.DrawImage(image, e.Graphics);
-            if (selectCurLoc != Point.Empty)
+            controller.DrawImage(image, e.Graphics, panelImg.Bounds);
+            if (selectCurLoc != null)
             {
                 controller.DrawSelectionRect(SelectionRect, e.Graphics);
             }
@@ -101,12 +103,12 @@ namespace ImageTool
 
         private void panelImg_MouseMove(object sender, MouseEventArgs e)
         {
-            if (dragStartLoc != Point.Empty)
+            if (dragStartLoc != null)
             {
-                controller.Drag(e.Location.ToVec() - dragStartLoc.ToVec());
+                controller.Drag(e.Location.ToVec() - ((Point)dragStartLoc).ToVec());
                 dragStartLoc = e.Location;
             }
-            if (selectStartLoc != Point.Empty)
+            if (selectStartLoc != null)
             {
                 selectCurLoc = controller.MouseToImageCoords(e.Location);
             }
@@ -123,14 +125,15 @@ namespace ImageTool
             if (e.Button == MouseButtons.Right)
             {
                 selectStartLoc = controller.MouseToImageCoords(e.Location);
+                selectCurLoc = selectStartLoc;
             }
         }
 
         private void panelImg_MouseLeave(object sender, EventArgs e)
         {
-            dragStartLoc = Point.Empty;
-            selectStartLoc = Point.Empty;
-            selectCurLoc = Point.Empty;
+            dragStartLoc = null;
+            selectStartLoc = null;
+            selectCurLoc = null;
         }
 
         private void panelImg_DoubleClick(object sender, EventArgs e)
@@ -140,24 +143,33 @@ namespace ImageTool
 
         private void panelImg_MouseUp(object sender, MouseEventArgs e)
         {
-            dragStartLoc = Point.Empty;
+            dragStartLoc = null;
 
-
-            if(e.Button == MouseButtons.Right && selectCurLoc != Point.Empty)
+            if(e.Button == MouseButtons.Right && selectCurLoc != null)
             {
                 controller.AddSelectionRect(SelectionRect, image);
-                selectStartLoc = Point.Empty;
-                selectCurLoc = Point.Empty;
+                selectStartLoc = null;
+                selectCurLoc = null;
+            }
+        }
+
+        private void panelImg_MouseClick(object sender, MouseEventArgs e)
+        {
+            if(e.Button == MouseButtons.Right && SelectionRect.Area() <= 2)
+            {
+                controller.DeleteSelectionRectAt(controller.MouseToImageCoords(e.Location), image);
+                selectStartLoc = null;
+                selectCurLoc = null;
             }
         }
     }
 
     struct SelectionRect
     {
-        Image source;
+        readonly Image source;
         public Image Source { get { return source; } }
 
-        Rectangle rect;
+        readonly Rectangle rect;
         public Rectangle Rect { get { return rect; } }
 
         public SelectionRect(Image source, Rectangle rect)
@@ -169,7 +181,7 @@ namespace ImageTool
 
     public class ImageController
     {
-        private MainForm mainForm;
+        private readonly MainForm mainForm;
 
         List<SelectionRect> selectionRects = new List<SelectionRect>();
 
@@ -224,15 +236,16 @@ namespace ImageTool
             mainForm.Refresh();
         }
 
-        internal void DrawImage(Image image, Graphics graphics)
+        internal void DrawImage(Image image, Graphics graphics, RectangleF bounds)
         {
-            DrawBG(graphics);
+            graphics.CompositingQuality = CompositingQuality.HighSpeed;
+            graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
 
-            graphics.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighSpeed;
+            DrawBG(graphics);
 
             RectangleF sourceRect = new RectangleF(0, 0, image.Width, image.Height);
             RectangleF targetRect = new RectangleF(0, 0, TargetW * ZoomFactor, TargetH * ZoomFactor);
-            drawCenter = graphics.ClipBounds.Center();
+            drawCenter = bounds.Center();
 
             targetRect.CenterOn((drawCenter.ToVector2() + offset * ZoomFactor).ToPointF());
 
@@ -248,6 +261,8 @@ namespace ImageTool
             ret /= ZoomFactor;
             ret += new Vector2(TargetW / 2, TargetH / 2);
             ret -= offset;
+            ret.X = Math.Clamp(ret.X, 0, TargetW-1);
+            ret.Y = Math.Clamp(ret.Y, 0, TargetH-1);
             return ret.ToPoint();
         }
 
@@ -307,6 +322,8 @@ namespace ImageTool
             if (outputImage == null) return;
             using (Graphics g = Graphics.FromImage(outputImage))
             {
+                g.CompositingQuality = CompositingQuality.HighQuality;
+                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
                 g.Clear(Color.Transparent);
                 if (baseImage != null) g.DrawImage(baseImage, 0, 0, TargetW, TargetH);
                 foreach(var sel in selectionRects)
@@ -326,6 +343,11 @@ namespace ImageTool
         {
             selectionRects.Add(new SelectionRect(image, rect));
             RedrawOutputImage();
+        }
+
+        internal void DeleteSelectionRectAt(Point location, Image image)
+        {
+            selectionRects.RemoveAll(sr => sr.Source == image && sr.Rect.Contains(location));
         }
 
         internal void DrawSelectionRect(Rectangle selectionRect, Graphics g)

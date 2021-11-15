@@ -43,7 +43,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.flowLayoutPanel.Location = new System.Drawing.Point(0, 32);
             this.flowLayoutPanel.Name = "flowLayoutPanel";
-            this.flowLayoutPanel.Size = new System.Drawing.Size(1584, 600);
+            this.flowLayoutPanel.Size = new System.Drawing.Size(1584, 704);
             this.flowLayoutPanel.TabIndex = 0;
             // 
             // statusStrip
@@ -95,6 +95,8 @@
             this.Name = "MainForm";
             this.ShowIcon = false;
             this.Text = "ImageTool";
+            this.ResizeEnd += new System.EventHandler(this.MainForm_ResizeEnd);
+            this.Resize += new System.EventHandler(this.MainForm_Resize);
             this.statusStrip.ResumeLayout(false);
             this.statusStrip.PerformLayout();
             this.ResumeLayout(false);

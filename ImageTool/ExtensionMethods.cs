@@ -38,5 +38,10 @@ namespace ExtensionMethods
         {
             return new Point(Math.Clamp(p.X, min.X, max.X), Math.Clamp(p.Y, min.Y, max.Y));
         }
+
+        public static int Area(this Rectangle r)
+        {
+            return r.Width * r.Height;
+        }
     }
 }

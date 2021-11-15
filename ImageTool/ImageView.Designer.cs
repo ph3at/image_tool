@@ -44,6 +44,7 @@
             this.panelImg.TabIndex = 0;
             this.panelImg.Paint += new System.Windows.Forms.PaintEventHandler(this.panelImg_Paint);
             this.panelImg.DoubleClick += new System.EventHandler(this.panelImg_DoubleClick);
+            this.panelImg.MouseClick += new System.Windows.Forms.MouseEventHandler(this.panelImg_MouseClick);
             this.panelImg.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panelImg_MouseDown);
             this.panelImg.MouseLeave += new System.EventHandler(this.panelImg_MouseLeave);
             this.panelImg.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panelImg_MouseMove);
@@ -53,8 +54,9 @@
             // 
             this.labelName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelName.BackColor = System.Drawing.SystemColors.Control;
             this.labelName.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.labelName.Location = new System.Drawing.Point(0, 515);
+            this.labelName.Location = new System.Drawing.Point(0, 512);
             this.labelName.Name = "labelName";
             this.labelName.Size = new System.Drawing.Size(512, 21);
             this.labelName.TabIndex = 1;
@@ -65,11 +67,11 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.labelName);
             this.Controls.Add(this.panelImg);
+            this.Controls.Add(this.labelName);
             this.Margin = new System.Windows.Forms.Padding(1);
             this.Name = "ImageView";
-            this.Size = new System.Drawing.Size(512, 600);
+            this.Size = new System.Drawing.Size(512, 535);
             this.ResumeLayout(false);
 
         }
