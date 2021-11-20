@@ -10,7 +10,15 @@ namespace ImageTool
         public MainForm(string[] folderlist)
         {
             InitializeComponent();
+
             controller = new ImageController(this);
+
+            CheckBox checkBoxShowSelectionsOnOtherImages = new CheckBox();
+            checkBoxShowSelectionsOnOtherImages.Checked = true;
+            checkBoxShowSelectionsOnOtherImages.Text = "Show selections on all images";
+            statusStrip.Items.Add(new ToolStripControlHost(checkBoxShowSelectionsOnOtherImages));
+            checkBoxShowSelectionsOnOtherImages.CheckedChanged += delegate { controller.ShowSelectionsOnAll = checkBoxShowSelectionsOnOtherImages.Checked; };
+
             this.folderlist = folderlist;
             LoadFolder();
         }
@@ -23,6 +31,7 @@ namespace ImageTool
             flowLayoutPanel.Controls.Clear();
             foreach (var image in images)
             {
+                if (Path.GetFileNameWithoutExtension(image) == "output") continue;
                 flowLayoutPanel.Controls.Add(new ImageView(image, controller));
             }
             outputView = new ImageView(controller);

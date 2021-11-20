@@ -22,10 +22,16 @@ namespace ImageTool
         readonly Image image;
         readonly ImageController controller;
 
+        internal int ImageWidth { get { return image.Width; } }
+        internal int ImageHeight { get { return image.Height; } }
+        internal Image ShownImage { get { return image; } }
+
         Point? dragStartLoc = null;
 
         Point? selectStartLoc = null;
         Point? selectCurLoc = null;
+
+        bool isRedrawSelection = false;
 
         public Rectangle SelectionRect
         {
@@ -56,7 +62,7 @@ namespace ImageTool
             this.controller = controller;
             SharedInit();
             image = new Bitmap(controller.TargetW, controller.TargetH);
-            controller.SetOutputImage((Bitmap)image);
+            controller.SetOutputImage(this);
 
             labelName.Text = "Output";
             labelName.ForeColor = Color.Red;
@@ -94,10 +100,10 @@ namespace ImageTool
             {
                 ControlPaint.DrawBorder(e.Graphics, panelImg.ClientRectangle, Color.Blue, ButtonBorderStyle.Solid);
             }
-            controller.DrawImage(image, e.Graphics, panelImg.Bounds);
+            controller.DrawImage(this, e.Graphics, panelImg.Bounds);
             if (selectCurLoc != null)
             {
-                controller.DrawSelectionRect(SelectionRect, e.Graphics);
+                controller.DrawActiveSelectionRect(SelectionRect, e.Graphics, isRedrawSelection);
             }
         }
 
@@ -122,10 +128,12 @@ namespace ImageTool
             {
                 dragStartLoc = e.Location;
             }
-            if (e.Button == MouseButtons.Right)
+            if (e.Button == MouseButtons.Right || e.Button == MouseButtons.Middle)
             {
                 selectStartLoc = controller.MouseToImageCoords(e.Location);
                 selectCurLoc = selectStartLoc;
+
+                isRedrawSelection = e.Button == MouseButtons.Middle;
             }
         }
 
@@ -145,9 +153,15 @@ namespace ImageTool
         {
             dragStartLoc = null;
 
-            if(e.Button == MouseButtons.Right && selectCurLoc != null)
+            if (!isRedrawSelection && e.Button == MouseButtons.Right && selectCurLoc != null && SelectionRect.Area() > 4)
             {
-                controller.AddSelectionRect(SelectionRect, image);
+                controller.AddSelectionRect(SelectionRect, this);
+                selectStartLoc = null;
+                selectCurLoc = null;
+            }
+            else if(isRedrawSelection && e.Button == MouseButtons.Middle && selectCurLoc != null && SelectionRect.Area() > 4)
+            {
+                controller.AddRedrawRect(SelectionRect);
                 selectStartLoc = null;
                 selectCurLoc = null;
             }
@@ -155,9 +169,16 @@ namespace ImageTool
 
         private void panelImg_MouseClick(object sender, MouseEventArgs e)
         {
-            if(e.Button == MouseButtons.Right && SelectionRect.Area() <= 2)
+            if (e.Button == MouseButtons.Right && SelectionRect.Area() <= 2)
             {
-                controller.DeleteSelectionRectAt(controller.MouseToImageCoords(e.Location), image);
+                controller.DeleteSelectionRectAt(controller.MouseToImageCoords(e.Location), this);
+                selectStartLoc = null;
+                selectCurLoc = null;
+            }
+
+            if (e.Button == MouseButtons.Middle && SelectionRect.Area() <= 2)
+            {
+                controller.DeleteRedrawRectAt(controller.MouseToImageCoords(e.Location));
                 selectStartLoc = null;
                 selectCurLoc = null;
             }
@@ -166,13 +187,13 @@ namespace ImageTool
 
     struct SelectionRect
     {
-        readonly Image source;
-        public Image Source { get { return source; } }
+        readonly ImageView source;
+        public ImageView Source { get { return source; } }
 
         readonly Rectangle rect;
         public Rectangle Rect { get { return rect; } }
 
-        public SelectionRect(Image source, Rectangle rect)
+        public SelectionRect(ImageView source, Rectangle rect)
         {
             this.source = source;
             this.rect = rect;
@@ -181,6 +202,8 @@ namespace ImageTool
 
     public class ImageController
     {
+        readonly Font font = new Font("Calibri", 10, FontStyle.Bold, GraphicsUnit.Point);
+
         private readonly MainForm mainForm;
 
         List<SelectionRect> selectionRects = new List<SelectionRect>();
@@ -196,11 +219,23 @@ namespace ImageTool
                 RedrawOutputImage();
             }
         }
-        Bitmap? outputImage;
-        public Bitmap OutputImage {
-            get {
+        Image? outputImage;
+        public Image OutputImage
+        {
+            get
+            {
                 Debug.Assert(outputImage != null);
                 return outputImage;
+            }
+        }
+
+        ImageView? outputImageView = null;
+        public ImageView OutputImageView
+        {
+            get
+            {
+                Debug.Assert(outputImageView != null);
+                return outputImageView;
             }
         }
 
@@ -236,23 +271,30 @@ namespace ImageTool
             mainForm.Refresh();
         }
 
-        internal void DrawImage(Image image, Graphics graphics, RectangleF bounds)
+        public bool ShowSelectionsOnAll { get; set; }
+
+        internal void DrawImage(ImageView imView, Graphics graphics, RectangleF bounds)
         {
             graphics.CompositingQuality = CompositingQuality.HighSpeed;
             graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
 
             DrawBG(graphics);
 
-            RectangleF sourceRect = new RectangleF(0, 0, image.Width, image.Height);
+            RectangleF sourceRect = new RectangleF(0, 0, imView.ImageWidth, imView.ImageHeight);
             RectangleF targetRect = new RectangleF(0, 0, TargetW * ZoomFactor, TargetH * ZoomFactor);
             drawCenter = bounds.Center();
 
             targetRect.CenterOn((drawCenter.ToVector2() + offset * ZoomFactor).ToPointF());
 
-            graphics.DrawImage(image, targetRect, sourceRect, GraphicsUnit.Pixel);
+            graphics.DrawImage(imView.ShownImage, targetRect, sourceRect, GraphicsUnit.Pixel);
 
-            selectionRects.Where(s => s.Source == image).ToList().ForEach(r => DrawSelectionRect(r.Rect, graphics));
+            var srsToDraw = selectionRects;
+            if (ShowSelectionsOnAll) srsToDraw = selectionRects.Where(s => s.Source == imView).ToList();
+            srsToDraw.ForEach(s => DrawSelectionRect(s, graphics, imView));
+
+            if(imView != outputImageView) redrawRects.ForEach(r => DrawRedrawRect(r, graphics));
         }
+
 
         internal Point MouseToImageCoords(Point mousePoint)
         {
@@ -261,8 +303,8 @@ namespace ImageTool
             ret /= ZoomFactor;
             ret += new Vector2(TargetW / 2, TargetH / 2);
             ret -= offset;
-            ret.X = Math.Clamp(ret.X, 0, TargetW-1);
-            ret.Y = Math.Clamp(ret.Y, 0, TargetH-1);
+            ret.X = Math.Clamp(ret.X, 0, TargetW - 1);
+            ret.Y = Math.Clamp(ret.Y, 0, TargetH - 1);
             return ret.ToPoint();
         }
 
@@ -311,9 +353,10 @@ namespace ImageTool
             return String.Format("X:{0,4} Y:{1,4}", lastMouseImageCoords.X, lastMouseImageCoords.Y);
         }
 
-        internal void SetOutputImage(Bitmap image)
+        internal void SetOutputImage(ImageView imView)
         {
-            outputImage = image;
+            outputImage = imView.ShownImage;
+            outputImageView = imView;
             mainForm.Refresh();
         }
 
@@ -326,37 +369,77 @@ namespace ImageTool
                 g.InterpolationMode = InterpolationMode.HighQualityBicubic;
                 g.Clear(Color.Transparent);
                 if (baseImage != null) g.DrawImage(baseImage, 0, 0, TargetW, TargetH);
-                foreach(var sel in selectionRects)
+                foreach (var sel in selectionRects)
                 {
-                    var img = sel.Source;
+                    var img = sel.Source.ShownImage;
                     RectangleF dstRec = sel.Rect;
                     RectangleF srcRec = dstRec;
                     float scale = img.Width / (float)TargetW;
                     srcRec.Scale(scale);
                     g.DrawImage(img, dstRec, srcRec, GraphicsUnit.Pixel);
                 }
+                foreach (var r in redrawRects)
+                {
+                    DrawRedrawRect(r, g, true);
+                }
             }
             mainForm.RefreshOutput();
         }
 
-        internal void AddSelectionRect(Rectangle rect, Image image)
+        internal void AddSelectionRect(Rectangle rect, ImageView imView)
         {
-            selectionRects.Add(new SelectionRect(image, rect));
+            selectionRects.Add(new SelectionRect(imView, rect));
             RedrawOutputImage();
+            mainForm.Refresh();
         }
 
-        internal void DeleteSelectionRectAt(Point location, Image image)
+        internal void DeleteSelectionRectAt(Point location, ImageView imView)
         {
-            selectionRects.RemoveAll(sr => sr.Source == image && sr.Rect.Contains(location));
+            selectionRects.RemoveAll(sr => sr.Source == imView && sr.Rect.Contains(location));
+            RedrawOutputImage();
+            mainForm.Refresh();
         }
 
-        internal void DrawSelectionRect(Rectangle selectionRect, Graphics g)
+        internal void DrawSelectionRect(SelectionRect selectionRect, Graphics g, ImageView imView)
         {
-            var rect = ImageToMouse(selectionRect);
+            if (imView == outputImageView) return;
+
+            if (selectionRect.Source == imView)
+            {
+                DrawActiveSelectionRect(selectionRect.Rect, g);
+            }
+            else
+            {
+                var rect = ImageToMouse(selectionRect.Rect);
+                Brush brush = new HatchBrush(HatchStyle.WideDownwardDiagonal, Color.FromArgb(125, Color.White), Color.FromArgb(125, Color.Black));
+                g.FillRectangle(brush, rect);
+            }
+        }
+        internal void DrawActiveSelectionRect(Rectangle rect, Graphics g, bool isRedrawRect = false)
+        {
+            rect = ImageToMouse(rect);
             rect.Inflate(1, 1);
-            g.DrawRectangle(Pens.White, rect);
+            g.DrawRectangle(isRedrawRect ? Pens.Red : Pens.White, rect);
             rect.Inflate(1, 1);
             g.DrawRectangle(Pens.Black, rect);
+        }
+
+        private void DrawRedrawRect(Rectangle rect, Graphics g, bool forOutput = false)
+        {
+            if(!forOutput) rect = ImageToMouse(rect);
+            Brush brush = new HatchBrush(HatchStyle.WideUpwardDiagonal, Color.FromArgb(125, Color.Red), Color.Transparent);
+            g.FillRectangle(brush, rect);
+
+            if (forOutput)
+            {
+                const string text = "Redraw";
+                var size = TextRenderer.MeasureText(text, font);
+                var pos = ((RectangleF)rect).Center();
+                pos.X -= size.Width / 2;
+                pos.Y -= size.Height / 2;
+                g.FillRectangle(Brushes.White, pos.X, pos.Y, size.Width, size.Height);
+                g.DrawString(text, font, Brushes.Black, pos);
+            }
         }
 
         internal void DrawBG(Graphics g)
@@ -382,13 +465,27 @@ namespace ImageTool
         BG currentBG = BG.Checker;
         internal void ChangeBG()
         {
-            switch(currentBG)
+            switch (currentBG)
             {
                 case BG.Black: currentBG = BG.White; break;
                 case BG.White: currentBG = BG.Checker; break;
                 case BG.Checker: currentBG = BG.Pink; break;
                 case BG.Pink: currentBG = BG.Black; break;
             }
+        }
+
+        List<Rectangle> redrawRects = new List<Rectangle>();
+        internal void AddRedrawRect(Rectangle selectionRect)
+        {
+            redrawRects.Add(selectionRect);
+            RedrawOutputImage();
+            mainForm.Refresh();
+        }
+        internal void DeleteRedrawRectAt(Point location)
+        {
+            redrawRects.RemoveAll(r => r.Contains(location));
+            RedrawOutputImage();
+            mainForm.Refresh();
         }
     }
 }
