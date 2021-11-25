@@ -14,6 +14,7 @@ namespace ImageTool
     using ExtensionMethods;
     using System.Diagnostics;
     using System.Drawing.Drawing2D;
+    using System.Drawing.Text;
     using System.Numerics;
 
     public partial class ImageView : UserControl
@@ -159,7 +160,7 @@ namespace ImageTool
                 selectStartLoc = null;
                 selectCurLoc = null;
             }
-            else if(isRedrawSelection && e.Button == MouseButtons.Middle && selectCurLoc != null && SelectionRect.Area() > 4)
+            else if (isRedrawSelection && e.Button == MouseButtons.Middle && selectCurLoc != null && SelectionRect.Area() > 4)
             {
                 controller.AddRedrawRect(SelectionRect);
                 selectStartLoc = null;
@@ -271,7 +272,16 @@ namespace ImageTool
             mainForm.Refresh();
         }
 
-        public bool ShowSelectionsOnAll { get; set; }
+        private bool showSelectionsOnAll = true;
+        public bool ShowSelectionsOnAll
+        {
+            get { return showSelectionsOnAll; }
+            set
+            {
+                showSelectionsOnAll = value;
+                mainForm.Refresh();
+            }
+        }
 
         internal void DrawImage(ImageView imView, Graphics graphics, RectangleF bounds)
         {
@@ -289,10 +299,10 @@ namespace ImageTool
             graphics.DrawImage(imView.ShownImage, targetRect, sourceRect, GraphicsUnit.Pixel);
 
             var srsToDraw = selectionRects;
-            if (ShowSelectionsOnAll) srsToDraw = selectionRects.Where(s => s.Source == imView).ToList();
+            if (!ShowSelectionsOnAll) srsToDraw = selectionRects.Where(s => s.Source == imView).ToList();
             srsToDraw.ForEach(s => DrawSelectionRect(s, graphics, imView));
 
-            if(imView != outputImageView) redrawRects.ForEach(r => DrawRedrawRect(r, graphics));
+            if (imView != outputImageView) redrawRects.ForEach(r => DrawRedrawRect(r, graphics));
         }
 
 
@@ -348,9 +358,9 @@ namespace ImageTool
             mainForm.RefreshStatus();
         }
 
-        public string GetMousePosString()
+        public string GetStatusString()
         {
-            return String.Format("X:{0,4} Y:{1,4}", lastMouseImageCoords.X, lastMouseImageCoords.Y);
+            return String.Format("Zoom: {0,4:f0}% - X:{1,4} Y:{2,4}  ", ZoomFactor*100, lastMouseImageCoords.X, lastMouseImageCoords.Y);
         }
 
         internal void SetOutputImage(ImageView imView)
@@ -426,7 +436,7 @@ namespace ImageTool
 
         private void DrawRedrawRect(Rectangle rect, Graphics g, bool forOutput = false)
         {
-            if(!forOutput) rect = ImageToMouse(rect);
+            if (!forOutput) rect = ImageToMouse(rect);
             Brush brush = new HatchBrush(HatchStyle.WideUpwardDiagonal, Color.FromArgb(125, Color.Red), Color.Transparent);
             g.FillRectangle(brush, rect);
 
@@ -438,6 +448,7 @@ namespace ImageTool
                 pos.X -= size.Width / 2;
                 pos.Y -= size.Height / 2;
                 g.FillRectangle(Brushes.White, pos.X, pos.Y, size.Width, size.Height);
+                g.TextRenderingHint = TextRenderingHint.AntiAlias;
                 g.DrawString(text, font, Brushes.Black, pos);
             }
         }

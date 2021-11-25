@@ -43,7 +43,7 @@ namespace ImageTool
 
         private void statusStrip_Paint(object sender, PaintEventArgs e)
         {
-            toolStripStatusLabel.Text = controller.GetMousePosString();
+            toolStripStatusLabel.Text = controller.GetStatusString();
         }
 
         internal void RefreshStatus()
