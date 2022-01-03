@@ -13,11 +13,21 @@ namespace ImageTool
 
             controller = new ImageController(this);
 
-            CheckBox checkBoxShowSelectionsOnOtherImages = new CheckBox();
-            checkBoxShowSelectionsOnOtherImages.Checked = true;
-            checkBoxShowSelectionsOnOtherImages.Text = "Show selections on all images";
-            statusStrip.Items.Add(new ToolStripControlHost(checkBoxShowSelectionsOnOtherImages));
-            checkBoxShowSelectionsOnOtherImages.CheckedChanged += delegate { controller.ShowSelectionsOnAll = checkBoxShowSelectionsOnOtherImages.Checked; };
+            {
+                CheckBox checkBoxShowSelectionsOnOtherImages = new CheckBox();
+                checkBoxShowSelectionsOnOtherImages.Checked = true;
+                checkBoxShowSelectionsOnOtherImages.Text = "Show selections on all images";
+                statusStrip.Items.Add(new ToolStripControlHost(checkBoxShowSelectionsOnOtherImages));
+                checkBoxShowSelectionsOnOtherImages.CheckedChanged += delegate { controller.ShowSelectionsOnAll = checkBoxShowSelectionsOnOtherImages.Checked; };
+            }
+
+            {
+                CheckBox checkBoxRepeatTexture = new CheckBox();
+                checkBoxRepeatTexture.Checked = false;
+                checkBoxRepeatTexture.Text = "Repeat Texture";
+                statusStrip.Items.Add(new ToolStripControlHost(checkBoxRepeatTexture));
+                checkBoxRepeatTexture.CheckedChanged += delegate { controller.RepeatTexture = checkBoxRepeatTexture.Checked; };
+            }
 
             this.folderlist = folderlist;
             LoadFolder();

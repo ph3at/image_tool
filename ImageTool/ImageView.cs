@@ -1,13 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
+﻿using System.Data;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace ImageTool
 {
@@ -283,6 +275,16 @@ namespace ImageTool
             }
         }
 
+        private bool repeatTexture = false;
+        public bool RepeatTexture { 
+            get { return RepeatTexture; }
+            set
+            {
+                repeatTexture = value;
+                mainForm?.Refresh();
+            }
+        }
+
         internal void DrawImage(ImageView imView, Graphics graphics, RectangleF bounds)
         {
             graphics.CompositingQuality = CompositingQuality.HighSpeed;
@@ -291,12 +293,25 @@ namespace ImageTool
             DrawBG(graphics);
 
             RectangleF sourceRect = new RectangleF(0, 0, imView.ImageWidth, imView.ImageHeight);
-            RectangleF targetRect = new RectangleF(0, 0, TargetW * ZoomFactor, TargetH * ZoomFactor);
+            float wz = TargetW * ZoomFactor;
+            float hz = TargetH * ZoomFactor;
+            RectangleF targetRect = new RectangleF(0, 0, wz, hz);
             drawCenter = bounds.Center();
 
             targetRect.CenterOn((drawCenter.ToVector2() + offset * ZoomFactor).ToPointF());
 
             graphics.DrawImage(imView.ShownImage, targetRect, sourceRect, GraphicsUnit.Pixel);
+
+            if(repeatTexture)
+            {
+                var offsets = new PointF[] { new PointF(0, hz), new PointF(0, -hz), new PointF(wz, 0), new PointF(-wz, 0)};
+                foreach(var offset in offsets)
+                {
+                    RectangleF currentTargetRect = targetRect;
+                    currentTargetRect.Offset(offset);
+                    graphics.DrawImage(imView.ShownImage, currentTargetRect, sourceRect, GraphicsUnit.Pixel);
+                }
+            }
 
             var srsToDraw = selectionRects;
             if (!ShowSelectionsOnAll) srsToDraw = selectionRects.Where(s => s.Source == imView).ToList();
