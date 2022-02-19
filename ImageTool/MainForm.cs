@@ -3,6 +3,7 @@ namespace ImageTool
     public partial class MainForm : Form
     {
         string[] folderlist;
+        Dictionary<string,Image> thumbnails;
         string curFolder;
         ImageController controller;
         ImageView? outputView;
@@ -38,7 +39,8 @@ namespace ImageTool
             }
 
             this.folderlist = folderlist;
-            LoadFolder(folderlist.FirstOrDefault(""));
+            curFolder = "";
+            thumbnails = new Dictionary<string, Image>();
         }
 
         int GetCurFolderId() {
@@ -99,7 +101,7 @@ namespace ImageTool
             flowLayoutPanel.SuspendLayout();
 
             const int NUM_ROWS = 2; // fix to two rows for now
-            const int SPACING = 5;
+            const int SPACING = 2;
 
             var num = flowLayoutPanel.Controls.Count;
             var numPerRow = (int)Math.Ceiling(num / (float)NUM_ROWS);
@@ -137,7 +139,8 @@ namespace ImageTool
 
         private void buttonNavJump_Click(object sender, EventArgs e)
         {
-
+            var form = new FormJump(this, folderlist, curFolder, thumbnails);
+            form.ShowDialog();
         }
 
         private void buttonSaveOutput_Click(object sender, EventArgs e)
@@ -188,6 +191,36 @@ Let Peter know if there are any missing features which would improve your workfl
                 return true;
             }
             return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+        private void MainForm_Shown(object sender, EventArgs e)
+        {
+            var loadingForm = new LoadingForm();
+            loadingForm.StartPosition = FormStartPosition.CenterParent;
+
+            var thumbThread = new Thread(new ThreadStart(delegate
+            {
+                while (!loadingForm.Visible);
+
+                for (int i = 0; i < folderlist.Length; i++)
+                {
+                    var imgfn = folderlist[i] + "/original_psp.png";
+                    if (File.Exists(imgfn))
+                    {
+                        thumbnails.Add(folderlist[i], Image.FromFile(imgfn));
+                    }
+                    loadingForm.Invoke(delegate {
+                        loadingForm.SetProgress(i / (float)folderlist.Length); 
+                        loadingForm.Refresh(); 
+                    });
+                }
+                loadingForm.Invoke(delegate { loadingForm.Close(); });
+            }));
+            thumbThread.Start();
+
+            loadingForm.ShowDialog();
+
+            LoadFolder(folderlist.FirstOrDefault(""));
         }
     }
 }

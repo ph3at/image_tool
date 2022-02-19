@@ -11,7 +11,7 @@ namespace ImageTool
         static void Main(string[] args)
         {
             if(args.Length > 0) Directory.SetCurrentDirectory(args[0]);
-            var folderlist = Directory.GetDirectories(".");
+            var folderlist = Directory.GetDirectories(".").Select(x => x.Replace(".\\", "")).ToArray();
             ApplicationConfiguration.Initialize();
             Application.Run(new MainForm(folderlist));
         }

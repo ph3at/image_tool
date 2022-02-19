@@ -553,9 +553,13 @@ namespace ImageTool
         {
             OutputImage.Save(folder + "/output.png");
 
-            OutputSpec outputSpec = new OutputSpec(BaseImage, selectionRects, redrawRects);
-            string jsonString = JsonSerializer.Serialize(outputSpec);
-            File.WriteAllText(getOutputSpecFn(folder), jsonString);
+            // Only write a spec file if there's at least one meaningful thing in it
+            if (baseImage != null || selectionRects.Count > 0 || redrawRects.Count > 0)
+            {
+                OutputSpec outputSpec = new OutputSpec(BaseImage, selectionRects, redrawRects);
+                string jsonString = JsonSerializer.Serialize(outputSpec);
+                File.WriteAllText(getOutputSpecFn(folder), jsonString);
+            }
         }
 
         internal ImageView? FindImageViewByFn(string fn)

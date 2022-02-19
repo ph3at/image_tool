@@ -59,5 +59,15 @@ namespace ImageTool.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ph3_games_logo_small {
+            get {
+                object obj = ResourceManager.GetObject("ph3_games_logo_small", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }

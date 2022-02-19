@@ -159,6 +159,7 @@
             this.Name = "MainForm";
             this.ShowIcon = false;
             this.Text = "PH3 ImageTool";
+            this.Shown += new System.EventHandler(this.MainForm_Shown);
             this.ResizeEnd += new System.EventHandler(this.MainForm_ResizeEnd);
             this.Resize += new System.EventHandler(this.MainForm_Resize);
             this.statusStrip.ResumeLayout(false);
