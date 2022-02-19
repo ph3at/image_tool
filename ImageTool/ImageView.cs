@@ -401,6 +401,7 @@ namespace ImageTool
                     RectangleF srcRec = dstRec;
                     float scale = img.Width / (float)TargetW;
                     srcRec.Scale(scale);
+                    g.CompositingMode = CompositingMode.SourceCopy;
                     g.DrawImage(img, dstRec, srcRec, GraphicsUnit.Pixel);
                 }
                 foreach (var r in redrawRects)
