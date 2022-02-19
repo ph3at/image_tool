@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.Reflection;
+using System.Text.Json;
 
 namespace ImageTool
 {
@@ -11,8 +12,8 @@ namespace ImageTool
 
     public partial class ImageView : UserControl
     {
-        readonly string imageFn = "";
-        readonly Image image;
+        internal readonly string imageFn = "";
+        internal readonly Image image;
         readonly ImageController controller;
 
         internal int ImageWidth { get { return image.Width; } }
@@ -75,7 +76,7 @@ namespace ImageTool
         {
             if (imageFn == "") return;
             labelName.Text = Path.GetFileNameWithoutExtension(imageFn);
-            if (controller.BaseImage == image)
+            if (controller.BaseImage == this)
             {
                 labelName.Text += " (Base)";
             }
@@ -89,7 +90,7 @@ namespace ImageTool
         private void panelImg_Paint(object sender, PaintEventArgs e)
         {
             UpdateLabelText();
-            if (controller.BaseImage == image)
+            if (controller.BaseImage == this)
             {
                 ControlPaint.DrawBorder(e.Graphics, panelImg.ClientRectangle, Color.Blue, ButtonBorderStyle.Solid);
             }
@@ -139,7 +140,7 @@ namespace ImageTool
 
         private void panelImg_DoubleClick(object sender, EventArgs e)
         {
-            controller.BaseImage = image;
+            controller.BaseImage = this;
         }
 
         private void panelImg_MouseUp(object sender, MouseEventArgs e)
@@ -193,6 +194,27 @@ namespace ImageTool
         }
     }
 
+    struct SelectionRectSpec
+    {
+        public Rectangle Rect { get; set; }
+        public string SourceFn { get; set; }
+
+        public SelectionRectSpec(string sourceFn, Rectangle rect) { SourceFn = sourceFn; Rect = rect; }
+    }
+
+    struct OutputSpec
+    {
+        public string BaseImageFn { get; set; }
+        public List<SelectionRectSpec> SelectionRects { get; set; }
+        public List<Rectangle> RedrawRects { get; set; }
+        public OutputSpec(ImageView? baseImageView, List<SelectionRect> selectionRects, List<Rectangle> redrawRects)
+        {
+            BaseImageFn = baseImageView != null ? baseImageView.imageFn : "";
+            SelectionRects = selectionRects.ConvertAll(x => new SelectionRectSpec(x.Source.imageFn, x.Rect));
+            RedrawRects = redrawRects;
+        }
+    }
+
     public class ImageController
     {
         readonly Font font = new Font("Calibri", 10, FontStyle.Bold, GraphicsUnit.Point);
@@ -201,8 +223,8 @@ namespace ImageTool
 
         List<SelectionRect> selectionRects = new List<SelectionRect>();
 
-        Image? baseImage;
-        public Image? BaseImage
+        ImageView? baseImage;
+        public ImageView? BaseImage
         {
             get { return baseImage; }
             set
@@ -283,6 +305,12 @@ namespace ImageTool
                 repeatTexture = value;
                 mainForm?.Refresh();
             }
+        }
+
+        List<ImageView> imageViews = new List<ImageView>();
+        internal void AddView(ImageView view)
+        {
+            imageViews.Add(view);
         }
 
         internal void DrawImage(ImageView imView, Graphics graphics, RectangleF bounds)
@@ -393,7 +421,7 @@ namespace ImageTool
                 g.CompositingQuality = CompositingQuality.HighQuality;
                 g.InterpolationMode = InterpolationMode.HighQualityBicubic;
                 g.Clear(Color.Transparent);
-                if (baseImage != null) g.DrawImage(baseImage, 0, 0, TargetW, TargetH);
+                if (baseImage != null) g.DrawImage(baseImage.image, 0, 0, TargetW, TargetH);
                 foreach (var sel in selectionRects)
                 {
                     var img = sel.Source.ShownImage;
@@ -403,6 +431,7 @@ namespace ImageTool
                     srcRec.Scale(scale);
                     g.CompositingMode = CompositingMode.SourceCopy;
                     g.DrawImage(img, dstRec, srcRec, GraphicsUnit.Pixel);
+                    g.CompositingMode = CompositingMode.SourceOver;
                 }
                 foreach (var r in redrawRects)
                 {
@@ -513,6 +542,56 @@ namespace ImageTool
             redrawRects.RemoveAll(r => r.Contains(location));
             RedrawOutputImage();
             mainForm.Refresh();
+        }
+
+        string getOutputSpecFn(string folder)
+        {
+            return folder + "/output_spec.json";
+        }
+
+        internal void SaveOutput(string folder)
+        {
+            OutputImage.Save(folder + "/output.png");
+
+            OutputSpec outputSpec = new OutputSpec(BaseImage, selectionRects, redrawRects);
+            string jsonString = JsonSerializer.Serialize(outputSpec);
+            File.WriteAllText(getOutputSpecFn(folder), jsonString);
+        }
+
+        internal ImageView? FindImageViewByFn(string fn)
+        {
+            return imageViews.Find(v => v.imageFn == fn);
+        }
+
+        internal void LoadOutput(string folder)
+        {
+            var specFn = getOutputSpecFn(folder);
+            if (File.Exists(specFn))
+            {
+                selectionRects.Clear();
+                redrawRects.Clear();
+
+                var jsonString = File.ReadAllText(getOutputSpecFn(folder));
+                var outputSpec = JsonSerializer.Deserialize<OutputSpec>(jsonString);
+                if (outputSpec.BaseImageFn.Length > 0)
+                {
+                    var view = FindImageViewByFn(outputSpec.BaseImageFn);
+                    if (view != null)
+                    {
+                        BaseImage = view;
+                    }
+                }
+                outputSpec.SelectionRects.ForEach(spec =>
+                {
+                    var view = FindImageViewByFn(spec.SourceFn);
+                    if (view != null)
+                    {
+                        AddSelectionRect(spec.Rect, view);
+                    }
+                });
+                redrawRects = outputSpec.RedrawRects;
+                RedrawOutputImage();
+            }
         }
     }
 }

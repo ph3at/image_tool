@@ -42,7 +42,9 @@ namespace ImageTool
             foreach (var image in images)
             {
                 if (Path.GetFileNameWithoutExtension(image) == "output") continue;
-                flowLayoutPanel.Controls.Add(new ImageView(image, controller));
+                var view = new ImageView(image, controller);
+                controller.AddView(view);
+                flowLayoutPanel.Controls.Add(view);
             }
             outputView = new ImageView(controller);
             flowLayoutPanel.Controls.Add(outputView);
@@ -74,7 +76,12 @@ namespace ImageTool
 
         private void buttonSaveOutput_Click(object sender, EventArgs e)
         {
-            controller.OutputImage.Save(folderlist[curFolder] + "/output.png");
+            controller.SaveOutput(folderlist[curFolder]);
+        }
+
+        private void buttonLoadOutputSpec_Click(object sender, EventArgs e)
+        {
+            controller.LoadOutput(folderlist[curFolder]);
         }
 
         private void MainForm_Resize(object sender, EventArgs e)
@@ -105,5 +112,6 @@ namespace ImageTool
         {
             Refresh();
         }
+
     }
 }

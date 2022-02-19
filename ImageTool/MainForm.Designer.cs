@@ -33,6 +33,7 @@
             this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.buttonChangeBG = new System.Windows.Forms.Button();
             this.buttonSaveOutput = new System.Windows.Forms.Button();
+            this.buttonLoadOutputSpec = new System.Windows.Forms.Button();
             this.statusStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -83,18 +84,29 @@
             this.buttonSaveOutput.UseVisualStyleBackColor = true;
             this.buttonSaveOutput.Click += new System.EventHandler(this.buttonSaveOutput_Click);
             // 
+            // buttonLoadOutputSpec
+            // 
+            this.buttonLoadOutputSpec.Location = new System.Drawing.Point(205, 3);
+            this.buttonLoadOutputSpec.Name = "buttonLoadOutputSpec";
+            this.buttonLoadOutputSpec.Size = new System.Drawing.Size(123, 23);
+            this.buttonLoadOutputSpec.TabIndex = 4;
+            this.buttonLoadOutputSpec.Text = "Load Output Spec";
+            this.buttonLoadOutputSpec.UseVisualStyleBackColor = true;
+            this.buttonLoadOutputSpec.Click += new System.EventHandler(this.buttonLoadOutputSpec_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1584, 761);
+            this.Controls.Add(this.buttonLoadOutputSpec);
             this.Controls.Add(this.buttonSaveOutput);
             this.Controls.Add(this.buttonChangeBG);
             this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.flowLayoutPanel);
             this.Name = "MainForm";
             this.ShowIcon = false;
-            this.Text = "ImageTool";
+            this.Text = "PH3 ImageTool";
             this.ResizeEnd += new System.EventHandler(this.MainForm_ResizeEnd);
             this.Resize += new System.EventHandler(this.MainForm_Resize);
             this.statusStrip.ResumeLayout(false);
@@ -111,5 +123,6 @@
         private ToolStripStatusLabel toolStripStatusLabel;
         private Button buttonChangeBG;
         private Button buttonSaveOutput;
+        private Button buttonLoadOutputSpec;
     }
 }
