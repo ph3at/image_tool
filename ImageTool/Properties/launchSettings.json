@@ -2,6 +2,7 @@
   "profiles": {
     "ImageTool": {
       "commandName": "Project",
+      "commandLineArgs": "H:\\dev\\zero_map_textures\\prepared\\",
       "workingDirectory": "E:\\dev\\ph3\\image_tool"
     }
   }

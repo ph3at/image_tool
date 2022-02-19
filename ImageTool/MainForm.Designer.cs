@@ -31,9 +31,13 @@
             this.flowLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.buttonChangeBG = new System.Windows.Forms.Button();
             this.buttonSaveOutput = new System.Windows.Forms.Button();
             this.buttonLoadOutputSpec = new System.Windows.Forms.Button();
+            this.buttonNavPrev = new System.Windows.Forms.Button();
+            this.buttonNavNext = new System.Windows.Forms.Button();
+            this.buttonSaveAndNext = new System.Windows.Forms.Button();
+            this.buttonNavJump = new System.Windows.Forms.Button();
+            this.buttonHelp = new System.Windows.Forms.Button();
             this.statusStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -64,21 +68,12 @@
             this.toolStripStatusLabel.Name = "toolStripStatusLabel";
             this.toolStripStatusLabel.Size = new System.Drawing.Size(0, 17);
             // 
-            // buttonChangeBG
-            // 
-            this.buttonChangeBG.Location = new System.Drawing.Point(12, 3);
-            this.buttonChangeBG.Name = "buttonChangeBG";
-            this.buttonChangeBG.Size = new System.Drawing.Size(75, 23);
-            this.buttonChangeBG.TabIndex = 2;
-            this.buttonChangeBG.Text = "Change BG";
-            this.buttonChangeBG.UseVisualStyleBackColor = true;
-            this.buttonChangeBG.Click += new System.EventHandler(this.buttonChangeBG_Click);
-            // 
             // buttonSaveOutput
             // 
-            this.buttonSaveOutput.Location = new System.Drawing.Point(93, 3);
+            this.buttonSaveOutput.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.buttonSaveOutput.Location = new System.Drawing.Point(665, 3);
             this.buttonSaveOutput.Name = "buttonSaveOutput";
-            this.buttonSaveOutput.Size = new System.Drawing.Size(106, 23);
+            this.buttonSaveOutput.Size = new System.Drawing.Size(81, 23);
             this.buttonSaveOutput.TabIndex = 3;
             this.buttonSaveOutput.Text = "Save Output";
             this.buttonSaveOutput.UseVisualStyleBackColor = true;
@@ -86,7 +81,8 @@
             // 
             // buttonLoadOutputSpec
             // 
-            this.buttonLoadOutputSpec.Location = new System.Drawing.Point(205, 3);
+            this.buttonLoadOutputSpec.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.buttonLoadOutputSpec.Location = new System.Drawing.Point(839, 3);
             this.buttonLoadOutputSpec.Name = "buttonLoadOutputSpec";
             this.buttonLoadOutputSpec.Size = new System.Drawing.Size(123, 23);
             this.buttonLoadOutputSpec.TabIndex = 4;
@@ -94,14 +90,70 @@
             this.buttonLoadOutputSpec.UseVisualStyleBackColor = true;
             this.buttonLoadOutputSpec.Click += new System.EventHandler(this.buttonLoadOutputSpec_Click);
             // 
+            // buttonNavPrev
+            // 
+            this.buttonNavPrev.Location = new System.Drawing.Point(12, 3);
+            this.buttonNavPrev.Name = "buttonNavPrev";
+            this.buttonNavPrev.Size = new System.Drawing.Size(53, 23);
+            this.buttonNavPrev.TabIndex = 5;
+            this.buttonNavPrev.Text = "< Prev";
+            this.buttonNavPrev.UseVisualStyleBackColor = true;
+            this.buttonNavPrev.Click += new System.EventHandler(this.buttonNavPrev_Click);
+            // 
+            // buttonNavNext
+            // 
+            this.buttonNavNext.Location = new System.Drawing.Point(71, 3);
+            this.buttonNavNext.Name = "buttonNavNext";
+            this.buttonNavNext.Size = new System.Drawing.Size(53, 23);
+            this.buttonNavNext.TabIndex = 6;
+            this.buttonNavNext.Text = "Next >";
+            this.buttonNavNext.UseVisualStyleBackColor = true;
+            this.buttonNavNext.Click += new System.EventHandler(this.buttonNavNext_Click);
+            // 
+            // buttonSaveAndNext
+            // 
+            this.buttonSaveAndNext.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.buttonSaveAndNext.Location = new System.Drawing.Point(752, 3);
+            this.buttonSaveAndNext.Name = "buttonSaveAndNext";
+            this.buttonSaveAndNext.Size = new System.Drawing.Size(81, 23);
+            this.buttonSaveAndNext.TabIndex = 7;
+            this.buttonSaveAndNext.Text = "Save && Next";
+            this.buttonSaveAndNext.UseVisualStyleBackColor = true;
+            this.buttonSaveAndNext.Click += new System.EventHandler(this.buttonSaveAndNext_Click);
+            // 
+            // buttonNavJump
+            // 
+            this.buttonNavJump.Location = new System.Drawing.Point(130, 3);
+            this.buttonNavJump.Name = "buttonNavJump";
+            this.buttonNavJump.Size = new System.Drawing.Size(103, 23);
+            this.buttonNavJump.TabIndex = 8;
+            this.buttonNavJump.Text = "Jump To Texture";
+            this.buttonNavJump.UseVisualStyleBackColor = true;
+            this.buttonNavJump.Click += new System.EventHandler(this.buttonNavJump_Click);
+            // 
+            // buttonHelp
+            // 
+            this.buttonHelp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonHelp.Location = new System.Drawing.Point(1469, 3);
+            this.buttonHelp.Name = "buttonHelp";
+            this.buttonHelp.Size = new System.Drawing.Size(103, 23);
+            this.buttonHelp.TabIndex = 9;
+            this.buttonHelp.Text = "Help && About";
+            this.buttonHelp.UseVisualStyleBackColor = true;
+            this.buttonHelp.Click += new System.EventHandler(this.buttonHelp_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1584, 761);
+            this.Controls.Add(this.buttonHelp);
+            this.Controls.Add(this.buttonNavJump);
+            this.Controls.Add(this.buttonSaveAndNext);
+            this.Controls.Add(this.buttonNavNext);
+            this.Controls.Add(this.buttonNavPrev);
             this.Controls.Add(this.buttonLoadOutputSpec);
             this.Controls.Add(this.buttonSaveOutput);
-            this.Controls.Add(this.buttonChangeBG);
             this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.flowLayoutPanel);
             this.Name = "MainForm";
@@ -121,8 +173,12 @@
         private FlowLayoutPanel flowLayoutPanel;
         private StatusStrip statusStrip;
         private ToolStripStatusLabel toolStripStatusLabel;
-        private Button buttonChangeBG;
         private Button buttonSaveOutput;
         private Button buttonLoadOutputSpec;
+        private Button buttonNavPrev;
+        private Button buttonNavNext;
+        private Button buttonSaveAndNext;
+        private Button buttonNavJump;
+        private Button buttonHelp;
     }
 }

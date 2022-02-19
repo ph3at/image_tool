@@ -3,7 +3,7 @@ namespace ImageTool
     public partial class MainForm : Form
     {
         string[] folderlist;
-        int curFolder = 0;
+        string curFolder;
         ImageController controller;
         ImageView? outputView;
 
@@ -20,7 +20,6 @@ namespace ImageTool
                 statusStrip.Items.Add(new ToolStripControlHost(checkBoxShowSelectionsOnOtherImages));
                 checkBoxShowSelectionsOnOtherImages.CheckedChanged += delegate { controller.ShowSelectionsOnAll = checkBoxShowSelectionsOnOtherImages.Checked; };
             }
-
             {
                 CheckBox checkBoxRepeatTexture = new CheckBox();
                 checkBoxRepeatTexture.Checked = false;
@@ -28,14 +27,37 @@ namespace ImageTool
                 statusStrip.Items.Add(new ToolStripControlHost(checkBoxRepeatTexture));
                 checkBoxRepeatTexture.CheckedChanged += delegate { controller.RepeatTexture = checkBoxRepeatTexture.Checked; };
             }
+            {
+                Button buttonChangeBg = new Button();
+                buttonChangeBg.Text = "Change BG";
+                statusStrip.Items.Add(new ToolStripControlHost(buttonChangeBg));
+                buttonChangeBg.Click += delegate {
+                    controller.ChangeBG();
+                    Refresh();
+                };
+            }
 
             this.folderlist = folderlist;
-            LoadFolder();
+            LoadFolder(folderlist.FirstOrDefault(""));
         }
 
-        public void LoadFolder()
+        int GetCurFolderId() {
+            return Array.IndexOf(folderlist, curFolder);
+        }
+        string GetNextFolder() {
+            return folderlist[Math.Min(GetCurFolderId()+1, folderlist.Length-1)];
+        }
+        string GetPrevFolder()
         {
-            var fn = folderlist[curFolder];
+            return folderlist[Math.Max(GetCurFolderId() - 1, 0)];
+        }
+
+        public void LoadFolder(string folder)
+        {
+            curFolder = folder;
+            controller = new ImageController(this);
+
+            var fn = curFolder;
             var images = Directory.EnumerateFiles(fn).Where(f => f.EndsWith(".png"));
             
             flowLayoutPanel.Controls.Clear();
@@ -50,7 +72,11 @@ namespace ImageTool
             flowLayoutPanel.Controls.Add(outputView);
             flowLayoutPanel.Update();
 
+            controller.LoadOutput(curFolder);
+            Text = String.Format("PH3 ImageTool - {0} [{1}/{2}]", curFolder, GetCurFolderId()+1, folderlist.Length);
             MainForm_Resize(this, new EventArgs());
+
+            Refresh();
         }
 
         private void statusStrip_Paint(object sender, PaintEventArgs e)
@@ -66,22 +92,6 @@ namespace ImageTool
         internal void RefreshOutput()
         {
             if(outputView != null) outputView.Refresh();
-        }
-
-        private void buttonChangeBG_Click(object sender, EventArgs e)
-        {
-            controller.ChangeBG();
-            Refresh();
-        }
-
-        private void buttonSaveOutput_Click(object sender, EventArgs e)
-        {
-            controller.SaveOutput(folderlist[curFolder]);
-        }
-
-        private void buttonLoadOutputSpec_Click(object sender, EventArgs e)
-        {
-            controller.LoadOutput(folderlist[curFolder]);
         }
 
         private void MainForm_Resize(object sender, EventArgs e)
@@ -113,5 +123,71 @@ namespace ImageTool
             Refresh();
         }
 
+        // Buttons, left to right
+
+        private void buttonNavPrev_Click(object sender, EventArgs e)
+        {
+            LoadFolder(GetPrevFolder());
+        }
+
+        private void buttonNavNext_Click(object sender, EventArgs e)
+        {
+            LoadFolder(GetNextFolder());
+        }
+
+        private void buttonNavJump_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void buttonSaveOutput_Click(object sender, EventArgs e)
+        {
+            controller.SaveOutput(curFolder);
+        }
+
+        private void buttonSaveAndNext_Click(object sender, EventArgs e)
+        {
+            buttonSaveOutput_Click(sender, e);
+            buttonNavNext_Click(sender, e);
+        }
+
+        private void buttonLoadOutputSpec_Click(object sender, EventArgs e)
+        {
+            controller.LoadOutput(curFolder);
+        }
+
+        private void buttonHelp_Click(object sender, EventArgs e)
+        {
+            string text = @"PH3 ImageTool {0}
+
+Controls - Mouse:
+LMB drag - pan images
+Wheel - zoom (centered on cursor)
+RMB drag - define selection area from this source
+MMB drag - define redraw area
+RMB/MMB click - delete respective areas
+
+Controls - Keyboard:
+Ctrl+S - Save Output
+Ctrl+Space - Save & Next
+
+Let Peter know if there are any missing features which would improve your workflow.";
+            MessageBox.Show(string.Format(text, Program.VERSION), "PH3 Imagetool", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (keyData == (Keys.Control | Keys.S))
+            {
+                buttonSaveOutput_Click(this, new EventArgs());
+                return true;
+            }
+            if (keyData == (Keys.Control | Keys.Space))
+            {
+                buttonSaveAndNext_Click(this, new EventArgs());
+                return true;
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
     }
 }

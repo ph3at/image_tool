@@ -403,7 +403,7 @@ namespace ImageTool
 
         public string GetStatusString()
         {
-            return String.Format("Zoom: {0,4:f0}% - X:{1,4} Y:{2,4}  ", ZoomFactor*100, lastMouseImageCoords.X, lastMouseImageCoords.Y);
+            return String.Format(" Zoom: {0,4:f0}% - X:{1,4} Y:{2,4}  ", ZoomFactor*100, lastMouseImageCoords.X, lastMouseImageCoords.Y);
         }
 
         internal void SetOutputImage(ImageView imView)
@@ -591,6 +591,7 @@ namespace ImageTool
                 });
                 redrawRects = outputSpec.RedrawRects;
                 RedrawOutputImage();
+                mainForm.Refresh();
             }
         }
     }

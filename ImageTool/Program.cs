@@ -2,13 +2,16 @@ namespace ImageTool
 {
     internal static class Program
     {
+        public readonly static string VERSION = "0.1";
+
         /// <summary>
         ///  The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
-            var folderlist = File.ReadAllLines("list.txt");
+            if(args.Length > 0) Directory.SetCurrentDirectory(args[0]);
+            var folderlist = Directory.GetDirectories(".");
             ApplicationConfiguration.Initialize();
             Application.Run(new MainForm(folderlist));
         }
