@@ -16,43 +16,37 @@ namespace ImageTool
         MainForm mainForm;
         string[] rootFolderList;
         string[] folderList;
-        Dictionary<string, bool> hasOutput;
-        Dictionary<string, Image> thumbnails;
 
-        Font font;
+        Font font, smallFont;
 
-        public FormJump(MainForm mainForm, string[] folderList, string selectedFolder, Dictionary<string, Image> thumbnails)
+        public FormJump(MainForm mainForm, string[] folderList, string selectedFolder)
         {
             InitializeComponent();
             this.mainForm = mainForm;
             rootFolderList = folderList.Select(x => x.ToString()).ToArray();
             this.folderList = folderList;
-            this.thumbnails = thumbnails;
 
             font = new Font(Font.Name, 14);
-
-            hasOutput = new Dictionary<string, bool>();
-            foreach(string folder in folderList)
-            {
-                hasOutput.Add(folder, File.Exists(folder + "/output.png"));
-            }
+            smallFont = new Font(Font.Name, 7);
 
             listBox.Items.AddRange(folderList);
             listBox.SelectedItem = selectedFolder;
         }
 
+        private void applySelect()
+        {
+            mainForm.LoadFolder((string)listBox.SelectedItem);
+        }
+
         private void buttonCancel_Click(object sender, EventArgs e)
         {
-            Close();
+            Hide();
         }
 
         private void buttonGo_Click(object sender, EventArgs e)
         {
-            if(listBox.SelectedItems.Count == 1)
-            {
-                mainForm.LoadFolder((string)listBox.SelectedItem);
-            }
-            Close();
+            applySelect();
+            Hide();
         }
 
         private void listBox_DrawItem(object sender, DrawItemEventArgs e)
@@ -61,6 +55,8 @@ namespace ImageTool
             string folder = folderList[e.Index];
 
             e.Graphics.FillRectangle(selected ? SystemBrushes.Highlight : SystemBrushes.ControlLight, e.Bounds);
+            var bot = e.Bounds.Y;
+            e.Graphics.DrawLine(SystemPens.ControlDarkDark, e.Bounds.X, bot, e.Bounds.Width, bot);
 
             StringFormat stringFormat = new StringFormat();
             stringFormat.Alignment = StringAlignment.Near;
@@ -70,27 +66,52 @@ namespace ImageTool
             e.Graphics.TextRenderingHint = TextRenderingHint.AntiAlias;
             e.Graphics.DrawString(folderList[e.Index], font, Brushes.Black, stringRect, stringFormat);
 
-            if (hasOutput[folder]) {
+            if (mainForm.HasOutput[folder]) {
                 stringRect.X = listBox.Width-62;
                 e.Graphics.DrawString("☑", font, Brushes.Black, stringRect, stringFormat);
             }
 
+            stringRect.X = (int)e.Graphics.MeasureString(folderList[e.Index], font).Width + 45;
+            stringRect.Width = listBox.Width - stringRect.X - 80;
+            e.Graphics.DrawString(mainForm.Assocs[folder], smallFont, Brushes.Black, stringRect, stringFormat);
+
             var s = listBox.ItemHeight;
-            var img = thumbnails[folder];
+            var img = mainForm.Thumbnails[folder];
             var imgRect = new Rectangle(0, e.Bounds.Y, Math.Min(s*img.Width/img.Height, s), s);
             e.Graphics.DrawImage(img,  imgRect);
         }
 
         private void textBoxFilter_TextChanged(object sender, EventArgs e)
         {
-            folderList = rootFolderList.Where(f => f.Contains(textBoxFilter.Text)).ToArray();
+            folderList = rootFolderList.Where(f => 
+                f.Contains(textBoxFilter.Text) || (checkBoxSearchAssoc.Checked && mainForm.Assocs[f].Contains(textBoxFilter.Text))
+            ).ToArray();
             listBox.Items.Clear();
             listBox.Items.AddRange(folderList);
         }
 
+        private void listBox_Resize(object sender, EventArgs e)
+        {
+            listBox.Refresh();
+        }
+
         private void listBox_DoubleClick(object sender, EventArgs e)
         {
-            buttonGo_Click(sender, e);
+            applySelect();
+        }
+
+        internal void NavPrev()
+        {
+            var idx = listBox.SelectedIndex;
+            if (idx > 0) listBox.SelectedIndex--;
+            applySelect();
+        }
+
+        internal void NavNext()
+        {
+            var idx = listBox.SelectedIndex;
+            if (idx < listBox.Items.Count-1) listBox.SelectedIndex++;
+            applySelect();
         }
     }
 }

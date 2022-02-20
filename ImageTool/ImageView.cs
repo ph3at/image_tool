@@ -418,6 +418,7 @@ namespace ImageTool
             if (outputImage == null) return;
             using (Graphics g = Graphics.FromImage(outputImage))
             {
+                g.CompositingMode = CompositingMode.SourceCopy;
                 g.CompositingQuality = CompositingQuality.HighQuality;
                 g.InterpolationMode = InterpolationMode.HighQualityBicubic;
                 g.Clear(Color.Transparent);
@@ -429,10 +430,9 @@ namespace ImageTool
                     RectangleF srcRec = dstRec;
                     float scale = img.Width / (float)TargetW;
                     srcRec.Scale(scale);
-                    g.CompositingMode = CompositingMode.SourceCopy;
                     g.DrawImage(img, dstRec, srcRec, GraphicsUnit.Pixel);
-                    g.CompositingMode = CompositingMode.SourceOver;
                 }
+                g.CompositingMode = CompositingMode.SourceOver;
                 foreach (var r in redrawRects)
                 {
                     DrawRedrawRect(r, g, true);

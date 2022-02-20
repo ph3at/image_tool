@@ -125,9 +125,9 @@
             // 
             this.buttonNavJump.Location = new System.Drawing.Point(130, 3);
             this.buttonNavJump.Name = "buttonNavJump";
-            this.buttonNavJump.Size = new System.Drawing.Size(103, 23);
+            this.buttonNavJump.Size = new System.Drawing.Size(127, 23);
             this.buttonNavJump.TabIndex = 8;
-            this.buttonNavJump.Text = "Jump To Texture";
+            this.buttonNavJump.Text = "Texture Navigation";
             this.buttonNavJump.UseVisualStyleBackColor = true;
             this.buttonNavJump.Click += new System.EventHandler(this.buttonNavJump_Click);
             // 

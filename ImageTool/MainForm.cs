@@ -3,10 +3,18 @@ namespace ImageTool
     public partial class MainForm : Form
     {
         string[] folderlist;
-        Dictionary<string,Image> thumbnails;
+        Dictionary<string, Image> thumbnails;
+        Dictionary<string, string> assocs;
+        Dictionary<string, bool> hasOutput;
+
         string curFolder;
         ImageController controller;
         ImageView? outputView;
+        FormJump jumpForm;
+
+        public Dictionary<string, Image> Thumbnails { get => thumbnails; }
+        public Dictionary<string, string> Assocs { get => assocs; }
+        public Dictionary<string, bool> HasOutput { get => hasOutput; }
 
         public MainForm(string[] folderlist)
         {
@@ -41,17 +49,15 @@ namespace ImageTool
             this.folderlist = folderlist;
             curFolder = "";
             thumbnails = new Dictionary<string, Image>();
+            assocs = new Dictionary<string, string>();
+            hasOutput = new Dictionary<string, bool>();
+
+            // just to silence warning
+            jumpForm = new FormJump(this, folderlist, "");
         }
 
         int GetCurFolderId() {
             return Array.IndexOf(folderlist, curFolder);
-        }
-        string GetNextFolder() {
-            return folderlist[Math.Min(GetCurFolderId()+1, folderlist.Length-1)];
-        }
-        string GetPrevFolder()
-        {
-            return folderlist[Math.Max(GetCurFolderId() - 1, 0)];
         }
 
         public void LoadFolder(string folder)
@@ -79,6 +85,7 @@ namespace ImageTool
             MainForm_Resize(this, new EventArgs());
 
             Refresh();
+            jumpForm.Refresh();
         }
 
         private void statusStrip_Paint(object sender, PaintEventArgs e)
@@ -129,23 +136,23 @@ namespace ImageTool
 
         private void buttonNavPrev_Click(object sender, EventArgs e)
         {
-            LoadFolder(GetPrevFolder());
+            jumpForm.NavPrev();
         }
 
         private void buttonNavNext_Click(object sender, EventArgs e)
         {
-            LoadFolder(GetNextFolder());
+            jumpForm.NavNext();
         }
 
         private void buttonNavJump_Click(object sender, EventArgs e)
         {
-            var form = new FormJump(this, folderlist, curFolder, thumbnails);
-            form.ShowDialog();
+            jumpForm.Show();
         }
 
         private void buttonSaveOutput_Click(object sender, EventArgs e)
         {
             controller.SaveOutput(curFolder);
+            hasOutput[curFolder] = true;
         }
 
         private void buttonSaveAndNext_Click(object sender, EventArgs e)
@@ -171,8 +178,10 @@ MMB drag - define redraw area
 RMB/MMB click - delete respective areas
 
 Controls - Keyboard:
-Ctrl+S - Save Output
-Ctrl+Space - Save & Next
+Left/Right - Navigate prev/next textures
+Ctrl+F - Jump to texture
+Ctrl+S - Save output
+Ctrl+Space - Save & next
 
 Let Peter know if there are any missing features which would improve your workflow.";
             MessageBox.Show(string.Format(text, Program.VERSION), "PH3 Imagetool", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -180,6 +189,21 @@ Let Peter know if there are any missing features which would improve your workfl
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
+            if (keyData == (Keys.Left))
+            {
+                buttonNavPrev_Click(this, new EventArgs());
+                return true;
+            }
+            if (keyData == (Keys.Right))
+            {
+                buttonNavNext_Click(this, new EventArgs());
+                return true;
+            }
+            if (keyData == (Keys.Control | Keys.F))
+            {
+                buttonNavJump_Click(this, new EventArgs());
+                return true;
+            }
             if (keyData == (Keys.Control | Keys.S))
             {
                 buttonSaveOutput_Click(this, new EventArgs());
@@ -200,8 +224,9 @@ Let Peter know if there are any missing features which would improve your workfl
 
             var thumbThread = new Thread(new ThreadStart(delegate
             {
-                while (!loadingForm.Visible);
+                while (!loadingForm.Visible); // ugh
 
+                // load thumbnails
                 for (int i = 0; i < folderlist.Length; i++)
                 {
                     var imgfn = folderlist[i] + "/original_psp.png";
@@ -210,10 +235,24 @@ Let Peter know if there are any missing features which would improve your workfl
                         thumbnails.Add(folderlist[i], Image.FromFile(imgfn));
                     }
                     loadingForm.Invoke(delegate {
-                        loadingForm.SetProgress(i / (float)folderlist.Length); 
+                        loadingForm.SetProgress(i / (float)folderlist.Length);
                         loadingForm.Refresh(); 
                     });
                 }
+                // load assocs
+                var assoclines = File.ReadAllLines("assoc.txt");
+                foreach(var assocline in assoclines)
+                {
+                    var elems = assocline.Split(" ");
+                    string rest = assocline.Replace(elems[0], "").Trim();
+                    assocs.Add(elems[0], rest);
+                }
+                // check output
+                foreach (string folder in folderlist)
+                {
+                    hasOutput.Add(folder, File.Exists(folder + "/output.png"));
+                }
+                // done
                 loadingForm.Invoke(delegate { loadingForm.Close(); });
             }));
             thumbThread.Start();
@@ -221,6 +260,8 @@ Let Peter know if there are any missing features which would improve your workfl
             loadingForm.ShowDialog();
 
             LoadFolder(folderlist.FirstOrDefault(""));
+
+            jumpForm = new FormJump(this, folderlist, curFolder);
         }
     }
 }
