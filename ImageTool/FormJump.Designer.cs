@@ -28,14 +28,18 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.textBoxFilter = new System.Windows.Forms.TextBox();
             this.labelFilter = new System.Windows.Forms.Label();
             this.listBox = new System.Windows.Forms.ListBox();
+            this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.toolStripMenuItemOpenFolder = new System.Windows.Forms.ToolStripMenuItem();
             this.buttonGo = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.checkBoxSearchAssoc = new System.Windows.Forms.CheckBox();
             this.checkBoxFilterOutput = new System.Windows.Forms.CheckBox();
             this.checkBoxFilterRedraw = new System.Windows.Forms.CheckBox();
+            this.contextMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // textBoxFilter
@@ -62,6 +66,7 @@
             this.listBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.listBox.ContextMenuStrip = this.contextMenuStrip;
             this.listBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.listBox.ItemHeight = 40;
             this.listBox.Location = new System.Drawing.Point(12, 66);
@@ -71,7 +76,22 @@
             this.listBox.TabIndex = 2;
             this.listBox.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.listBox_DrawItem);
             this.listBox.DoubleClick += new System.EventHandler(this.listBox_DoubleClick);
+            this.listBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.listBox_MouseDown);
             this.listBox.Resize += new System.EventHandler(this.listBox_Resize);
+            // 
+            // contextMenuStrip
+            // 
+            this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItemOpenFolder});
+            this.contextMenuStrip.Name = "contextMenuStrip";
+            this.contextMenuStrip.Size = new System.Drawing.Size(202, 48);
+            // 
+            // toolStripMenuItemOpenFolder
+            // 
+            this.toolStripMenuItemOpenFolder.Name = "toolStripMenuItemOpenFolder";
+            this.toolStripMenuItemOpenFolder.Size = new System.Drawing.Size(201, 22);
+            this.toolStripMenuItemOpenFolder.Text = "Open Containing Folder";
+            this.toolStripMenuItemOpenFolder.Click += new System.EventHandler(this.toolStripMenuItemOpenFolder_Click);
             // 
             // buttonGo
             // 
@@ -153,6 +173,7 @@
             this.Controls.Add(this.textBoxFilter);
             this.Name = "FormJump";
             this.Text = "Jump to Texture";
+            this.contextMenuStrip.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -168,5 +189,7 @@
         private CheckBox checkBoxSearchAssoc;
         private CheckBox checkBoxFilterOutput;
         private CheckBox checkBoxFilterRedraw;
+        private ContextMenuStrip contextMenuStrip;
+        private ToolStripMenuItem toolStripMenuItemOpenFolder;
     }
 }

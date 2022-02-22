@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Text;
 using System.Linq;
@@ -124,6 +125,19 @@ namespace ImageTool
         private void listBox_DoubleClick(object sender, EventArgs e)
         {
             applySelect();
+        }
+
+        private void listBox_MouseDown(object sender, MouseEventArgs e)
+        {
+            listBox.SelectedIndex = listBox.IndexFromPoint(e.Location);
+        }
+
+        private void toolStripMenuItemOpenFolder_Click(object sender, EventArgs e)
+        {
+            if(listBox.SelectedItem != null)
+            {
+                Process.Start("explorer.exe", Path.GetFullPath(".\\" + listBox.SelectedItem.ToString()));
+            }
         }
 
         internal void NavPrev()
