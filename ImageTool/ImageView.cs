@@ -529,10 +529,21 @@ namespace ImageTool
         {
             return folder + "/output_spec.json";
         }
+        string getOutputImgFn(string folder)
+        {
+            return folder + "/output.png";
+        }
+
+        void ClearState()
+        {
+            BaseImage = null;
+            selectionRects.Clear();
+            redrawRects.Clear();
+        }
 
         internal void SaveOutput(string folder)
         {
-            OutputImage.Save(folder + "/output.png");
+            OutputImage.Save(getOutputImgFn(folder));
 
             // Only write a spec file if there's at least one meaningful thing in it
             if (baseImage != null || selectionRects.Count > 0 || redrawRects.Count > 0)
@@ -541,6 +552,17 @@ namespace ImageTool
                 string jsonString = JsonSerializer.Serialize(outputSpec);
                 File.WriteAllText(getOutputSpecFn(folder), jsonString);
             }
+        }
+        internal void ClearOutput(string folder)
+        {
+            var specFn = getOutputSpecFn(folder);
+            File.Delete(specFn);
+            var imgFn = getOutputImgFn(folder);
+            File.Delete(imgFn);
+
+            ClearState();
+            RedrawOutputImage();
+            mainForm.Refresh();
         }
 
         internal ImageView? FindImageViewByFn(string fn)
@@ -554,8 +576,7 @@ namespace ImageTool
             var specFn = getOutputSpecFn(folder);
             if (File.Exists(specFn))
             {
-                selectionRects.Clear();
-                redrawRects.Clear();
+                ClearState();
 
                 var jsonString = File.ReadAllText(getOutputSpecFn(folder));
                 var outputSpec = JsonSerializer.Deserialize<OutputSpec>(jsonString);

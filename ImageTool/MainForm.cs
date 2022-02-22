@@ -156,6 +156,7 @@ namespace ImageTool
         {
             controller.SaveOutput(curFolder);
             hasOutput[curFolder] = true;
+            jumpForm.Refresh();
         }
 
         private void buttonSaveAndNext_Click(object sender, EventArgs e)
@@ -167,6 +168,13 @@ namespace ImageTool
         private void buttonLoadOutputSpec_Click(object sender, EventArgs e)
         {
             controller.LoadOutput(curFolder);
+        }
+
+        private void buttonClearOutput_Click(object sender, EventArgs e)
+        {
+            controller.ClearOutput(curFolder);
+            hasOutput[curFolder] = false;
+            jumpForm.Refresh();
         }
 
         private void buttonHelp_Click(object sender, EventArgs e)
