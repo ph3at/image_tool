@@ -286,27 +286,6 @@ namespace ImageTool
             mainForm.Refresh();
         }
 
-        private bool showSelectionsOnAll = true;
-        public bool ShowSelectionsOnAll
-        {
-            get { return showSelectionsOnAll; }
-            set
-            {
-                showSelectionsOnAll = value;
-                mainForm.Refresh();
-            }
-        }
-
-        private bool repeatTexture = false;
-        public bool RepeatTexture { 
-            get { return RepeatTexture; }
-            set
-            {
-                repeatTexture = value;
-                mainForm?.Refresh();
-            }
-        }
-
         List<ImageView> imageViews = new List<ImageView>();
         internal void AddView(ImageView view)
         {
@@ -330,7 +309,7 @@ namespace ImageTool
 
             graphics.DrawImage(imView.ShownImage, targetRect, sourceRect, GraphicsUnit.Pixel);
 
-            if(repeatTexture)
+            if(mainForm.checkBoxRepeatTexture.Checked)
             {
                 var offsets = new PointF[] { new PointF(0, hz), new PointF(0, -hz), new PointF(wz, 0), new PointF(-wz, 0)};
                 foreach(var offset in offsets)
@@ -342,7 +321,7 @@ namespace ImageTool
             }
 
             var srsToDraw = selectionRects;
-            if (!ShowSelectionsOnAll) srsToDraw = selectionRects.Where(s => s.Source == imView).ToList();
+            if (!mainForm.checkBoxShowSelectionsOnOtherImages.Checked) srsToDraw = selectionRects.Where(s => s.Source == imView).ToList();
             srsToDraw.ForEach(s => DrawSelectionRect(s, graphics, imView));
 
             if (imView != outputImageView) redrawRects.ForEach(r => DrawRedrawRect(r, graphics));

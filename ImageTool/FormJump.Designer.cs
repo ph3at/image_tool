@@ -106,6 +106,7 @@
             this.checkBoxSearchAssoc.TabIndex = 5;
             this.checkBoxSearchAssoc.Text = "Also search in associated textures";
             this.checkBoxSearchAssoc.UseVisualStyleBackColor = true;
+            this.checkBoxSearchAssoc.CheckedChanged += new System.EventHandler(this.checkBoxSearchAssoc_CheckedChanged);
             // 
             // FormJump
             // 

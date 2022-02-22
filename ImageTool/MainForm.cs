@@ -12,6 +12,9 @@ namespace ImageTool
         ImageView? outputView;
         FormJump jumpForm;
 
+        internal CheckBox checkBoxRepeatTexture;
+        internal CheckBox checkBoxShowSelectionsOnOtherImages;
+
         public Dictionary<string, Image> Thumbnails { get => thumbnails; }
         public Dictionary<string, string> Assocs { get => assocs; }
         public Dictionary<string, bool> HasOutput { get => hasOutput; }
@@ -23,18 +26,18 @@ namespace ImageTool
             controller = new ImageController(this);
 
             {
-                CheckBox checkBoxShowSelectionsOnOtherImages = new CheckBox();
+                checkBoxShowSelectionsOnOtherImages = new CheckBox();
                 checkBoxShowSelectionsOnOtherImages.Checked = true;
                 checkBoxShowSelectionsOnOtherImages.Text = "Show selections on all images";
                 statusStrip.Items.Add(new ToolStripControlHost(checkBoxShowSelectionsOnOtherImages));
-                checkBoxShowSelectionsOnOtherImages.CheckedChanged += delegate { controller.ShowSelectionsOnAll = checkBoxShowSelectionsOnOtherImages.Checked; };
+                checkBoxShowSelectionsOnOtherImages.CheckedChanged += delegate { Refresh(); };
             }
             {
-                CheckBox checkBoxRepeatTexture = new CheckBox();
+                checkBoxRepeatTexture = new CheckBox();
                 checkBoxRepeatTexture.Checked = false;
                 checkBoxRepeatTexture.Text = "Repeat Texture";
                 statusStrip.Items.Add(new ToolStripControlHost(checkBoxRepeatTexture));
-                checkBoxRepeatTexture.CheckedChanged += delegate { controller.RepeatTexture = checkBoxRepeatTexture.Checked; };
+                checkBoxRepeatTexture.CheckedChanged += delegate { Refresh(); };
             }
             {
                 Button buttonChangeBg = new Button();

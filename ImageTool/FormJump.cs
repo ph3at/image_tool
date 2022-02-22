@@ -107,6 +107,11 @@ namespace ImageTool
             applySelect();
         }
 
+        private void checkBoxSearchAssoc_CheckedChanged(object sender, EventArgs e)
+        {
+            textBoxFilter_TextChanged(sender, e);
+        }
+
         internal void NavNext()
         {
             var idx = listBox.SelectedIndex;
