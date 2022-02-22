@@ -276,6 +276,8 @@ namespace ImageTool
         public int TargetW { get { return largestNativeWidth; } }
         public int TargetH { get { return largestNativeHeight; } }
 
+        public bool HasRedrawRects { get { return redrawRects.Count > 0; } }
+
         public void AddImage(Image img)
         {
             largestNativeWidth = Math.Max(largestNativeWidth, img.Width);
@@ -525,11 +527,11 @@ namespace ImageTool
             mainForm.Refresh();
         }
 
-        string getOutputSpecFn(string folder)
+        internal string GetOutputSpecFn(string folder)
         {
             return folder + "/output_spec.json";
         }
-        string getOutputImgFn(string folder)
+        internal string GetOutputImgFn(string folder)
         {
             return folder + "/output.png";
         }
@@ -543,21 +545,21 @@ namespace ImageTool
 
         internal void SaveOutput(string folder)
         {
-            OutputImage.Save(getOutputImgFn(folder));
+            OutputImage.Save(GetOutputImgFn(folder));
 
             // Only write a spec file if there's at least one meaningful thing in it
             if (baseImage != null || selectionRects.Count > 0 || redrawRects.Count > 0)
             {
                 OutputSpec outputSpec = new OutputSpec(BaseImage, selectionRects, redrawRects);
                 string jsonString = JsonSerializer.Serialize(outputSpec);
-                File.WriteAllText(getOutputSpecFn(folder), jsonString);
+                File.WriteAllText(GetOutputSpecFn(folder), jsonString);
             }
         }
         internal void ClearOutput(string folder)
         {
-            var specFn = getOutputSpecFn(folder);
+            var specFn = GetOutputSpecFn(folder);
             File.Delete(specFn);
-            var imgFn = getOutputImgFn(folder);
+            var imgFn = GetOutputImgFn(folder);
             File.Delete(imgFn);
 
             ClearState();
@@ -573,12 +575,12 @@ namespace ImageTool
 
         internal void LoadOutput(string folder)
         {
-            var specFn = getOutputSpecFn(folder);
+            var specFn = GetOutputSpecFn(folder);
             if (File.Exists(specFn))
             {
                 ClearState();
 
-                var jsonString = File.ReadAllText(getOutputSpecFn(folder));
+                var jsonString = File.ReadAllText(GetOutputSpecFn(folder));
                 var outputSpec = JsonSerializer.Deserialize<OutputSpec>(jsonString);
                 if (outputSpec.BaseImageFn.Length > 0)
                 {

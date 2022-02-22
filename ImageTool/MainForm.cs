@@ -1,11 +1,14 @@
+using System.Text.Json;
+
 namespace ImageTool
 {
     public partial class MainForm : Form
     {
         string[] folderlist;
-        Dictionary<string, Image> thumbnails;
-        Dictionary<string, string> assocs;
-        Dictionary<string, bool> hasOutput;
+        Dictionary<string, Image> thumbnails = new Dictionary<string, Image>();
+        Dictionary<string, string> assocs = new Dictionary<string, string>();
+        Dictionary<string, bool> hasOutput = new Dictionary<string, bool>();
+        Dictionary<string, bool> hasRedraw = new Dictionary<string, bool>();
 
         string curFolder;
         ImageController controller;
@@ -18,6 +21,7 @@ namespace ImageTool
         public Dictionary<string, Image> Thumbnails { get => thumbnails; }
         public Dictionary<string, string> Assocs { get => assocs; }
         public Dictionary<string, bool> HasOutput { get => hasOutput; }
+        public Dictionary<string, bool> HasRedraw { get => hasRedraw; }
 
         public MainForm(string[] folderlist)
         {
@@ -51,9 +55,6 @@ namespace ImageTool
 
             this.folderlist = folderlist;
             curFolder = "";
-            thumbnails = new Dictionary<string, Image>();
-            assocs = new Dictionary<string, string>();
-            hasOutput = new Dictionary<string, bool>();
 
             // just to silence warning
             jumpForm = new FormJump(this, folderlist, "");
@@ -156,6 +157,7 @@ namespace ImageTool
         {
             controller.SaveOutput(curFolder);
             hasOutput[curFolder] = true;
+            hasRedraw[curFolder] = controller.HasRedrawRects;
             jumpForm.Refresh();
         }
 
@@ -174,6 +176,7 @@ namespace ImageTool
         {
             controller.ClearOutput(curFolder);
             hasOutput[curFolder] = false;
+            hasRedraw[curFolder] = false;
             jumpForm.Refresh();
         }
 
@@ -261,7 +264,17 @@ Let Peter know if there are any missing features which would improve your workfl
                 // check output
                 foreach (string folder in folderlist)
                 {
-                    hasOutput.Add(folder, File.Exists(folder + "/output.png"));
+                    var specfn = controller.GetOutputSpecFn(folder);
+                    bool hasSpec = File.Exists(specfn);
+                    hasOutput.Add(folder, hasSpec);
+                    bool thisHasRedraw = false;
+                    if (hasSpec)
+                    {
+                        var jsonString = File.ReadAllText(controller.GetOutputSpecFn(folder));
+                        var outputSpec = JsonSerializer.Deserialize<OutputSpec>(jsonString);
+                        thisHasRedraw = outputSpec.RedrawRects.Count > 0;
+                    }
+                    hasRedraw.Add(folder, thisHasRedraw);
                 }
                 // done
                 loadingForm.Invoke(delegate { loadingForm.Close(); });

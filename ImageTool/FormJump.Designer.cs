@@ -34,25 +34,27 @@
             this.buttonGo = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.checkBoxSearchAssoc = new System.Windows.Forms.CheckBox();
+            this.checkBoxFilterOutput = new System.Windows.Forms.CheckBox();
+            this.checkBoxFilterRedraw = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // textBoxFilter
             // 
             this.textBoxFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxFilter.Location = new System.Drawing.Point(74, 12);
+            this.textBoxFilter.Location = new System.Drawing.Point(93, 12);
             this.textBoxFilter.Name = "textBoxFilter";
-            this.textBoxFilter.Size = new System.Drawing.Size(277, 23);
+            this.textBoxFilter.Size = new System.Drawing.Size(258, 23);
             this.textBoxFilter.TabIndex = 0;
-            this.textBoxFilter.TextChanged += new System.EventHandler(this.textBoxFilter_TextChanged);
+            this.textBoxFilter.TextChanged += new System.EventHandler(this.FilterChanged);
             // 
             // labelFilter
             // 
             this.labelFilter.Location = new System.Drawing.Point(12, 12);
             this.labelFilter.Name = "labelFilter";
-            this.labelFilter.Size = new System.Drawing.Size(56, 23);
+            this.labelFilter.Size = new System.Drawing.Size(75, 23);
             this.labelFilter.TabIndex = 1;
-            this.labelFilter.Text = "Filter:";
+            this.labelFilter.Text = "Text Filter:";
             this.labelFilter.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // listBox
@@ -61,9 +63,8 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.listBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.listBox.FormattingEnabled = true;
             this.listBox.ItemHeight = 40;
-            this.listBox.Location = new System.Drawing.Point(12, 41);
+            this.listBox.Location = new System.Drawing.Point(12, 66);
             this.listBox.Name = "listBox";
             this.listBox.ScrollAlwaysVisible = true;
             this.listBox.Size = new System.Drawing.Size(555, 564);
@@ -75,7 +76,7 @@
             // buttonGo
             // 
             this.buttonGo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonGo.Location = new System.Drawing.Point(492, 612);
+            this.buttonGo.Location = new System.Drawing.Point(492, 634);
             this.buttonGo.Name = "buttonGo";
             this.buttonGo.Size = new System.Drawing.Size(75, 23);
             this.buttonGo.TabIndex = 3;
@@ -86,7 +87,7 @@
             // buttonCancel
             // 
             this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonCancel.Location = new System.Drawing.Point(12, 612);
+            this.buttonCancel.Location = new System.Drawing.Point(12, 634);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
             this.buttonCancel.TabIndex = 4;
@@ -106,7 +107,33 @@
             this.checkBoxSearchAssoc.TabIndex = 5;
             this.checkBoxSearchAssoc.Text = "Also search in associated textures";
             this.checkBoxSearchAssoc.UseVisualStyleBackColor = true;
-            this.checkBoxSearchAssoc.CheckedChanged += new System.EventHandler(this.checkBoxSearchAssoc_CheckedChanged);
+            this.checkBoxSearchAssoc.CheckedChanged += new System.EventHandler(this.FilterChanged);
+            // 
+            // checkBoxFilterOutput
+            // 
+            this.checkBoxFilterOutput.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.checkBoxFilterOutput.AutoSize = true;
+            this.checkBoxFilterOutput.Location = new System.Drawing.Point(121, 41);
+            this.checkBoxFilterOutput.Name = "checkBoxFilterOutput";
+            this.checkBoxFilterOutput.Size = new System.Drawing.Size(131, 19);
+            this.checkBoxFilterOutput.TabIndex = 6;
+            this.checkBoxFilterOutput.Text = "Filter \"With Output\"";
+            this.checkBoxFilterOutput.ThreeState = true;
+            this.checkBoxFilterOutput.UseVisualStyleBackColor = true;
+            this.checkBoxFilterOutput.CheckStateChanged += new System.EventHandler(this.FilterChanged);
+            // 
+            // checkBoxFilterRedraw
+            // 
+            this.checkBoxFilterRedraw.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.checkBoxFilterRedraw.AutoSize = true;
+            this.checkBoxFilterRedraw.Location = new System.Drawing.Point(283, 41);
+            this.checkBoxFilterRedraw.Name = "checkBoxFilterRedraw";
+            this.checkBoxFilterRedraw.Size = new System.Drawing.Size(177, 19);
+            this.checkBoxFilterRedraw.TabIndex = 7;
+            this.checkBoxFilterRedraw.Text = "Filter \"With Redraw Regions\"";
+            this.checkBoxFilterRedraw.ThreeState = true;
+            this.checkBoxFilterRedraw.UseVisualStyleBackColor = true;
+            this.checkBoxFilterRedraw.CheckStateChanged += new System.EventHandler(this.FilterChanged);
             // 
             // FormJump
             // 
@@ -114,8 +141,10 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
-            this.ClientSize = new System.Drawing.Size(579, 647);
+            this.ClientSize = new System.Drawing.Size(579, 661);
             this.ControlBox = false;
+            this.Controls.Add(this.checkBoxFilterRedraw);
+            this.Controls.Add(this.checkBoxFilterOutput);
             this.Controls.Add(this.checkBoxSearchAssoc);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonGo);
@@ -137,5 +166,7 @@
         private Button buttonGo;
         private Button buttonCancel;
         private CheckBox checkBoxSearchAssoc;
+        private CheckBox checkBoxFilterOutput;
+        private CheckBox checkBoxFilterRedraw;
     }
 }

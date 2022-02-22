@@ -17,7 +17,7 @@ namespace ImageTool
         string[] rootFolderList;
         string[] folderList;
 
-        Font font, smallFont;
+        Font font, smallFont, emoFont;
 
         public FormJump(MainForm mainForm, string[] folderList, string selectedFolder)
         {
@@ -28,6 +28,7 @@ namespace ImageTool
 
             font = new Font(Font.Name, 14);
             smallFont = new Font(Font.Name, 7);
+            emoFont = new Font("Segoe UI Emoji", 14);
 
             listBox.Items.AddRange(folderList);
             listBox.SelectedItem = selectedFolder;
@@ -35,7 +36,10 @@ namespace ImageTool
 
         private void applySelect()
         {
-            mainForm.LoadFolder((string)listBox.SelectedItem);
+            if (listBox.SelectedItem != null)
+            {
+                mainForm.LoadFolder((string)listBox.SelectedItem);
+            }
         }
 
         private void buttonCancel_Click(object sender, EventArgs e)
@@ -54,7 +58,7 @@ namespace ImageTool
             bool selected = (e.State & DrawItemState.Selected) == DrawItemState.Selected;
             string folder = folderList[e.Index];
 
-            e.Graphics.FillRectangle(selected ? SystemBrushes.Highlight : SystemBrushes.ControlLight, e.Bounds);
+            e.Graphics.FillRectangle(selected ? Brushes.LightSkyBlue : SystemBrushes.ControlLight, e.Bounds);
             var bot = e.Bounds.Y;
             e.Graphics.DrawLine(SystemPens.ControlDarkDark, e.Bounds.X, bot, e.Bounds.Width, bot);
 
@@ -67,8 +71,14 @@ namespace ImageTool
             e.Graphics.DrawString(folderList[e.Index], font, Brushes.Black, stringRect, stringFormat);
 
             if (mainForm.HasOutput[folder]) {
-                stringRect.X = listBox.Width-62;
-                e.Graphics.DrawString("☑", font, Brushes.Black, stringRect, stringFormat);
+                stringRect.X = listBox.Width-56;
+                e.Graphics.DrawString("☑", emoFont, Brushes.Black, stringRect, stringFormat);
+            }
+
+            if (mainForm.HasRedraw[folder])
+            {
+                stringRect.X = listBox.Width - 80;
+                e.Graphics.DrawString("🖌", emoFont, Brushes.DarkRed, stringRect, stringFormat);            
             }
 
             stringRect.X = (int)e.Graphics.MeasureString(folderList[e.Index], font).Width + 45;
@@ -81,11 +91,27 @@ namespace ImageTool
             e.Graphics.DrawImage(img,  imgRect);
         }
 
-        private void textBoxFilter_TextChanged(object sender, EventArgs e)
+        private void FilterChanged(object sender, EventArgs e)
         {
             folderList = rootFolderList.Where(f => 
                 f.Contains(textBoxFilter.Text) || (checkBoxSearchAssoc.Checked && mainForm.Assocs[f].Contains(textBoxFilter.Text))
             ).ToArray();
+            if (checkBoxFilterOutput.CheckState == CheckState.Checked)
+            {
+                folderList = rootFolderList.Where(f => mainForm.HasOutput[f]).ToArray();
+            }
+            if (checkBoxFilterOutput.CheckState == CheckState.Indeterminate)
+            {
+                folderList = rootFolderList.Where(f => !mainForm.HasOutput[f]).ToArray();
+            }
+            if (checkBoxFilterRedraw.CheckState == CheckState.Checked)
+            {
+                folderList = rootFolderList.Where(f => mainForm.HasRedraw[f]).ToArray();
+            }
+            if (checkBoxFilterRedraw.CheckState == CheckState.Indeterminate)
+            {
+                folderList = rootFolderList.Where(f => !mainForm.HasRedraw[f]).ToArray();
+            }
             listBox.Items.Clear();
             listBox.Items.AddRange(folderList);
         }
@@ -105,11 +131,6 @@ namespace ImageTool
             var idx = listBox.SelectedIndex;
             if (idx > 0) listBox.SelectedIndex--;
             applySelect();
-        }
-
-        private void checkBoxSearchAssoc_CheckedChanged(object sender, EventArgs e)
-        {
-            textBoxFilter_TextChanged(sender, e);
         }
 
         internal void NavNext()
