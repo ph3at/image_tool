@@ -543,6 +543,7 @@ namespace ImageTool
 
         internal ImageView? FindImageViewByFn(string fn)
         {
+            if (fn.StartsWith(".\\")) fn = fn.Substring(2);
             return imageViews.Find(v => v.imageFn == fn);
         }
 
