@@ -27,6 +27,8 @@ namespace ImageTool
 
         bool isRedrawSelection = false;
 
+        bool IsOutput { get { return imageFn == ""; } }
+
         public Rectangle SelectionRect
         {
             get
@@ -122,7 +124,7 @@ namespace ImageTool
             {
                 dragStartLoc = e.Location;
             }
-            if (e.Button == MouseButtons.Right || e.Button == MouseButtons.Middle)
+            if ((!IsOutput && e.Button == MouseButtons.Right) || e.Button == MouseButtons.Middle)
             {
                 selectStartLoc = controller.MouseToImageCoords(e.Location);
                 selectCurLoc = selectStartLoc;
