@@ -99,19 +99,19 @@ namespace ImageTool
             ).ToArray();
             if (checkBoxFilterOutput.CheckState == CheckState.Checked)
             {
-                folderList = rootFolderList.Where(f => mainForm.HasOutput[f]).ToArray();
+                folderList = folderList.Where(f => mainForm.HasOutput[f]).ToArray();
             }
             if (checkBoxFilterOutput.CheckState == CheckState.Indeterminate)
             {
-                folderList = rootFolderList.Where(f => !mainForm.HasOutput[f]).ToArray();
+                folderList = folderList.Where(f => !mainForm.HasOutput[f]).ToArray();
             }
             if (checkBoxFilterRedraw.CheckState == CheckState.Checked)
             {
-                folderList = rootFolderList.Where(f => mainForm.HasRedraw[f]).ToArray();
+                folderList = folderList.Where(f => mainForm.HasRedraw[f]).ToArray();
             }
             if (checkBoxFilterRedraw.CheckState == CheckState.Indeterminate)
             {
-                folderList = rootFolderList.Where(f => !mainForm.HasRedraw[f]).ToArray();
+                folderList = folderList.Where(f => !mainForm.HasRedraw[f]).ToArray();
             }
             listBox.Items.Clear();
             listBox.Items.AddRange(folderList);
