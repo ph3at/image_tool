@@ -303,25 +303,44 @@ namespace ImageTool
 
             DrawBG(graphics);
 
-            RectangleF sourceRect = new RectangleF(0, 0, imView.ImageWidth, imView.ImageHeight);
+            Rectangle sourceRect = new Rectangle(0, 0, imView.ImageWidth, imView.ImageHeight);
             float wz = TargetW * ZoomFactor;
             float hz = TargetH * ZoomFactor;
             RectangleF targetRect = new RectangleF(0, 0, wz, hz);
             drawCenter = bounds.Center();
 
             targetRect.CenterOn((drawCenter.ToVector2() + offset * ZoomFactor).ToPointF());
+            Rectangle targetIntRect = targetRect.RoundToInt();
+            int x = targetIntRect.X;
+            int y = targetIntRect.Y;
+            int w = targetIntRect.Width;
+            int h = targetIntRect.Height;
 
-            graphics.DrawImage(imView.ShownImage, targetRect, sourceRect, GraphicsUnit.Pixel);
+            graphics.DrawImage(imView.ShownImage, new Point[] { new Point(x, y), new Point(x + w, y), new Point(x, y + h) });
 
-            if(mainForm.checkBoxRepeatTexture.Checked)
+            if (mainForm.checkBoxRepeatTexture.Checked)
             {
-                var offsets = new PointF[] { new PointF(0, hz), new PointF(0, -hz), new PointF(wz, 0), new PointF(-wz, 0)};
-                foreach(var offset in offsets)
+                var offsets = new Point[] {
+                    new Point(0, targetIntRect.Width),
+                    new Point(0, -targetIntRect.Width),
+                    new Point(targetIntRect.Height, 0),
+                    new Point(-targetIntRect.Height, 0)
+                };
+                foreach (var offset in offsets)
                 {
-                    RectangleF currentTargetRect = targetRect;
+                    Rectangle currentTargetRect = targetIntRect;
                     currentTargetRect.Offset(offset);
                     graphics.DrawImage(imView.ShownImage, currentTargetRect, sourceRect, GraphicsUnit.Pixel);
                 }
+            }
+            else if (mainForm.checkBoxMirrorTexture.Checked)
+            {
+                graphics.DrawImage(imView.ShownImage,
+                    new Point[] { new Point(x, y), new Point(x - w, y), new Point(x, y + h) });
+                graphics.DrawImage(imView.ShownImage,
+                    new Point[] { new Point(x, y + 2 * h), new Point(x - w, y + 2 * h), new Point(x, y + h) });
+                graphics.DrawImage(imView.ShownImage,
+                    new Point[] { new Point(x, y + 2 * h), new Point(x + w, y + 2 * h), new Point(x, y + h) });
             }
 
             var srsToDraw = selectionRects;

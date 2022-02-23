@@ -16,6 +16,7 @@ namespace ImageTool
         FormJump jumpForm;
 
         internal CheckBox checkBoxRepeatTexture;
+        internal CheckBox checkBoxMirrorTexture;
         internal CheckBox checkBoxShowSelectionsOnOtherImages;
 
         public Dictionary<string, Image> Thumbnails { get => thumbnails; }
@@ -41,8 +42,26 @@ namespace ImageTool
                 checkBoxRepeatTexture.Checked = false;
                 checkBoxRepeatTexture.Text = "Repeat Texture";
                 statusStrip.Items.Add(new ToolStripControlHost(checkBoxRepeatTexture));
-                checkBoxRepeatTexture.CheckedChanged += delegate { Refresh(); };
             }
+            {
+                checkBoxMirrorTexture = new CheckBox();
+                checkBoxMirrorTexture.Checked = false;
+                checkBoxMirrorTexture.Text = "Mirror Texture";
+                statusStrip.Items.Add(new ToolStripControlHost(checkBoxMirrorTexture));
+            }
+            bool handleEvent = true;
+            EventHandler textureDelegate = delegate(object? sender, System.EventArgs eventArgs) {
+                if (handleEvent)
+                {
+                    handleEvent = false;
+                    if (sender == checkBoxMirrorTexture) checkBoxRepeatTexture.Checked = false;
+                    else checkBoxMirrorTexture.Checked = false;
+                    Refresh();
+                }
+                handleEvent = true;
+            };
+            checkBoxRepeatTexture.CheckedChanged += textureDelegate;
+            checkBoxMirrorTexture.CheckedChanged += textureDelegate;
             {
                 Button buttonChangeBg = new Button();
                 buttonChangeBg.Text = "Change BG";

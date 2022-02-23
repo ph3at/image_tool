@@ -43,5 +43,14 @@ namespace ExtensionMethods
         {
             return r.Width * r.Height;
         }
+
+        public static Rectangle RoundToInt(this RectangleF r)
+        {
+            int x = (int)Math.Floor(r.X);
+            int y = (int)Math.Floor(r.Y);
+            int w = (int)Math.Floor(r.Width);
+            int h = (int)Math.Floor(r.Height);
+            return new Rectangle(x, y, w, h);
+        }
     }
 }
