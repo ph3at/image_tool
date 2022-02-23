@@ -89,7 +89,8 @@ namespace ImageTool
             controller = new ImageController(this);
 
             var fn = curFolder;
-            var images = Directory.EnumerateFiles(fn).Where(f => f.EndsWith(".png"));
+            var images = Directory.EnumerateFiles(fn).Where(f => f.EndsWith(".png")).ToArray();
+            Array.Sort(images);
             
             flowLayoutPanel.Controls.Clear();
             foreach (var image in images)
@@ -257,7 +258,7 @@ Let Peter know if there are any missing features which would improve your workfl
 
             var thumbThread = new Thread(new ThreadStart(delegate
             {
-                while (!loadingForm.Visible); // ugh
+                while (!loadingForm.Visible) ; // ugh
 
                 // load thumbnails
                 for (int i = 0; i < folderlist.Length; i++)
@@ -269,31 +270,8 @@ Let Peter know if there are any missing features which would improve your workfl
                     }
                     loadingForm.Invoke(delegate {
                         loadingForm.SetProgress(i / (float)folderlist.Length);
-                        loadingForm.Refresh(); 
+                        loadingForm.Refresh();
                     });
-                }
-                // load assocs
-                var assoclines = File.ReadAllLines("assoc.txt");
-                foreach(var assocline in assoclines)
-                {
-                    var elems = assocline.Split(" ");
-                    string rest = assocline.Replace(elems[0], "").Trim();
-                    assocs.Add(elems[0], rest);
-                }
-                // check output
-                foreach (string folder in folderlist)
-                {
-                    var specfn = controller.GetOutputSpecFn(folder);
-                    bool hasSpec = File.Exists(specfn);
-                    hasOutput.Add(folder, hasSpec);
-                    bool thisHasRedraw = false;
-                    if (hasSpec)
-                    {
-                        var jsonString = File.ReadAllText(controller.GetOutputSpecFn(folder));
-                        var outputSpec = JsonSerializer.Deserialize<OutputSpec>(jsonString);
-                        thisHasRedraw = outputSpec.RedrawRects.Count > 0;
-                    }
-                    hasRedraw.Add(folder, thisHasRedraw);
                 }
                 // done
                 loadingForm.Invoke(delegate { loadingForm.Close(); });
@@ -302,9 +280,42 @@ Let Peter know if there are any missing features which would improve your workfl
 
             loadingForm.ShowDialog();
 
+            ReloadMetainformation();
+
             LoadFolder(folderlist.FirstOrDefault(""));
 
             jumpForm = new FormJump(this, folderlist, curFolder);
+        }
+
+        internal void ReloadMetainformation()
+        {
+            assocs.Clear();
+            hasOutput.Clear();
+            hasRedraw.Clear();
+
+            // load assocs
+            var assoclines = File.ReadAllLines("assoc.txt");
+            foreach (var assocline in assoclines)
+            {
+                var elems = assocline.Split(" ");
+                string rest = assocline.Replace(elems[0], "").Trim();
+                assocs.Add(elems[0], rest);
+            }
+            // check output
+            foreach (string folder in folderlist)
+            {
+                var specfn = controller.GetOutputSpecFn(folder);
+                bool hasSpec = File.Exists(specfn);
+                hasOutput.Add(folder, hasSpec);
+                bool thisHasRedraw = false;
+                if (hasSpec)
+                {
+                    var jsonString = File.ReadAllText(controller.GetOutputSpecFn(folder));
+                    var outputSpec = JsonSerializer.Deserialize<OutputSpec>(jsonString);
+                    thisHasRedraw = outputSpec.RedrawRects.Count > 0;
+                }
+                hasRedraw.Add(folder, thisHasRedraw);
+            }
         }
     }
 }

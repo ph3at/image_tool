@@ -39,6 +39,7 @@
             this.checkBoxSearchAssoc = new System.Windows.Forms.CheckBox();
             this.checkBoxFilterOutput = new System.Windows.Forms.CheckBox();
             this.checkBoxFilterRedraw = new System.Windows.Forms.CheckBox();
+            this.buttonRefresh = new System.Windows.Forms.Button();
             this.contextMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -84,7 +85,7 @@
             this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuItemOpenFolder});
             this.contextMenuStrip.Name = "contextMenuStrip";
-            this.contextMenuStrip.Size = new System.Drawing.Size(202, 48);
+            this.contextMenuStrip.Size = new System.Drawing.Size(202, 26);
             // 
             // toolStripMenuItemOpenFolder
             // 
@@ -131,9 +132,8 @@
             // 
             // checkBoxFilterOutput
             // 
-            this.checkBoxFilterOutput.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.checkBoxFilterOutput.AutoSize = true;
-            this.checkBoxFilterOutput.Location = new System.Drawing.Point(121, 41);
+            this.checkBoxFilterOutput.Location = new System.Drawing.Point(12, 41);
             this.checkBoxFilterOutput.Name = "checkBoxFilterOutput";
             this.checkBoxFilterOutput.Size = new System.Drawing.Size(131, 19);
             this.checkBoxFilterOutput.TabIndex = 6;
@@ -144,9 +144,8 @@
             // 
             // checkBoxFilterRedraw
             // 
-            this.checkBoxFilterRedraw.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.checkBoxFilterRedraw.AutoSize = true;
-            this.checkBoxFilterRedraw.Location = new System.Drawing.Point(283, 41);
+            this.checkBoxFilterRedraw.Location = new System.Drawing.Point(174, 41);
             this.checkBoxFilterRedraw.Name = "checkBoxFilterRedraw";
             this.checkBoxFilterRedraw.Size = new System.Drawing.Size(177, 19);
             this.checkBoxFilterRedraw.TabIndex = 7;
@@ -154,6 +153,17 @@
             this.checkBoxFilterRedraw.ThreeState = true;
             this.checkBoxFilterRedraw.UseVisualStyleBackColor = true;
             this.checkBoxFilterRedraw.CheckStateChanged += new System.EventHandler(this.FilterChanged);
+            // 
+            // buttonRefresh
+            // 
+            this.buttonRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonRefresh.Location = new System.Drawing.Point(419, 38);
+            this.buttonRefresh.Name = "buttonRefresh";
+            this.buttonRefresh.Size = new System.Drawing.Size(148, 23);
+            this.buttonRefresh.TabIndex = 8;
+            this.buttonRefresh.Text = "Refresh Metainformation";
+            this.buttonRefresh.UseVisualStyleBackColor = true;
+            this.buttonRefresh.Click += new System.EventHandler(this.buttonRefresh_Click);
             // 
             // FormJump
             // 
@@ -163,6 +173,7 @@
             this.CancelButton = this.buttonCancel;
             this.ClientSize = new System.Drawing.Size(579, 661);
             this.ControlBox = false;
+            this.Controls.Add(this.buttonRefresh);
             this.Controls.Add(this.checkBoxFilterRedraw);
             this.Controls.Add(this.checkBoxFilterOutput);
             this.Controls.Add(this.checkBoxSearchAssoc);
@@ -191,5 +202,6 @@
         private CheckBox checkBoxFilterRedraw;
         private ContextMenuStrip contextMenuStrip;
         private ToolStripMenuItem toolStripMenuItemOpenFolder;
+        private Button buttonRefresh;
     }
 }

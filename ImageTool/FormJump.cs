@@ -140,6 +140,12 @@ namespace ImageTool
             }
         }
 
+        private void buttonRefresh_Click(object sender, EventArgs e)
+        {
+            mainForm.ReloadMetainformation();
+            Refresh();
+        }
+
         internal void NavPrev()
         {
             var idx = listBox.SelectedIndex;
