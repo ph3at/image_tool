@@ -321,10 +321,10 @@ namespace ImageTool
             if (mainForm.checkBoxRepeatTexture.Checked)
             {
                 var offsets = new Point[] {
-                    new Point(0, targetIntRect.Width),
-                    new Point(0, -targetIntRect.Width),
-                    new Point(targetIntRect.Height, 0),
-                    new Point(-targetIntRect.Height, 0)
+                    new Point(targetIntRect.Width, 0),
+                    new Point(-targetIntRect.Width, 0),
+                    new Point(0, targetIntRect.Height),
+                    new Point(0, -targetIntRect.Height)
                 };
                 foreach (var offset in offsets)
                 {
