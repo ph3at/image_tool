@@ -2,7 +2,7 @@ namespace ImageTool
 {
     internal static class Program
     {
-        public readonly static string VERSION = "0.7.1";
+        public readonly static string VERSION = "0.8.0";
 
         /// <summary>
         ///  The main entry point for the application.
@@ -13,6 +13,7 @@ namespace ImageTool
             if(args.Length > 0) Directory.SetCurrentDirectory(args[0]);
             else Directory.SetCurrentDirectory("prepared");
             var folderlist = Directory.GetDirectories(".").Select(x => x.Replace(".\\", "")).ToArray();
+            Array.Sort(folderlist);
             ApplicationConfiguration.Initialize();
             Application.Run(new MainForm(folderlist));
         }

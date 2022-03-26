@@ -564,7 +564,15 @@ namespace ImageTool
 
         internal void SaveOutput(string folder)
         {
-            OutputImage.Save(GetOutputImgFn(folder));
+            // if only an output is selected with no changes, copy it 1:1
+            if (baseImage != null && selectionRects.Count == 0 && redrawRects.Count == 0)
+            {
+                File.Copy(baseImage.imageFn, GetOutputImgFn(folder), true);
+            }
+            else
+            {
+                OutputImage.Save(GetOutputImgFn(folder));
+            }
 
             // Only write a spec file if there's at least one meaningful thing in it
             if (baseImage != null || selectionRects.Count > 0 || redrawRects.Count > 0)
