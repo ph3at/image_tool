@@ -7,6 +7,7 @@ namespace ImageTool
         string[] folderlist;
         Dictionary<string, Image> thumbnails = new Dictionary<string, Image>();
         Dictionary<string, string> assocs = new Dictionary<string, string>();
+        Dictionary<string, bool> hasAlpha = new Dictionary<string, bool>();
         Dictionary<string, bool> hasOutput = new Dictionary<string, bool>();
         Dictionary<string, bool> hasRedraw = new Dictionary<string, bool>();
 
@@ -18,11 +19,14 @@ namespace ImageTool
         internal CheckBox checkBoxRepeatTexture;
         internal CheckBox checkBoxMirrorTexture;
         internal CheckBox checkBoxShowSelectionsOnOtherImages;
+        internal CheckBox checkBoxVisualizeAlpha;
+        internal NumericUpDown numericUpDownVisualizeAlpha;
 
         public Dictionary<string, Image> Thumbnails { get => thumbnails; }
         public Dictionary<string, string> Assocs { get => assocs; }
         public Dictionary<string, bool> HasOutput { get => hasOutput; }
         public Dictionary<string, bool> HasRedraw { get => hasRedraw; }
+        public Dictionary<string, bool> HasAlpha { get => hasAlpha; }
 
         public MainForm(string[] folderlist)
         {
@@ -37,6 +41,7 @@ namespace ImageTool
                 statusStrip.Items.Add(new ToolStripControlHost(checkBoxShowSelectionsOnOtherImages));
                 checkBoxShowSelectionsOnOtherImages.CheckedChanged += delegate { Refresh(); };
             }
+            statusStrip.Items.Add(new ToolStripSeparator());
             {
                 checkBoxRepeatTexture = new CheckBox();
                 checkBoxRepeatTexture.Checked = false;
@@ -62,6 +67,7 @@ namespace ImageTool
             };
             checkBoxRepeatTexture.CheckedChanged += textureDelegate;
             checkBoxMirrorTexture.CheckedChanged += textureDelegate;
+            statusStrip.Items.Add(new ToolStripSeparator());
             {
                 Button buttonChangeBg = new Button();
                 buttonChangeBg.Text = "Change BG";
@@ -70,6 +76,26 @@ namespace ImageTool
                     controller.ChangeBG();
                     Refresh();
                 };
+            }
+            {
+                EventHandler alphaVisDelegate = delegate (object? sender, System.EventArgs eventArgs)
+                {
+                    controller.RedrawOutputImage();
+                };
+
+                checkBoxVisualizeAlpha = new CheckBox();
+                checkBoxVisualizeAlpha.Checked = true;
+                checkBoxVisualizeAlpha.Text = "Visualize Alpha";
+                checkBoxVisualizeAlpha.Padding = new Padding(10, 0, 0, 0);
+                statusStrip.Items.Add(new ToolStripControlHost(checkBoxVisualizeAlpha));
+                checkBoxVisualizeAlpha.CheckedChanged += alphaVisDelegate;
+
+                numericUpDownVisualizeAlpha = new NumericUpDown();
+                numericUpDownVisualizeAlpha.Value = 25;
+                numericUpDownVisualizeAlpha.Minimum = 0;
+                numericUpDownVisualizeAlpha.Maximum = 255;
+                statusStrip.Items.Add(new ToolStripControlHost(numericUpDownVisualizeAlpha));
+                numericUpDownVisualizeAlpha.ValueChanged += alphaVisDelegate;
             }
 
             this.folderlist = folderlist;
@@ -86,6 +112,7 @@ namespace ImageTool
         public void LoadFolder(string folder)
         {
             curFolder = folder;
+            controller.Dispose();
             controller = new ImageController(this);
 
             var fn = curFolder;
@@ -266,7 +293,11 @@ Let Peter know if there are any missing features which would improve your workfl
                     var imgfn = folderlist[i] + "/original_psp.png";
                     if (File.Exists(imgfn))
                     {
-                        thumbnails.Add(folderlist[i], Image.FromFile(imgfn));
+                        // use filestream instead of Image.FromFile so the Image doesn't *hold the file handle* WTH MS
+                        using (FileStream fs = new FileStream(imgfn, FileMode.Open))
+                        {
+                            thumbnails.Add(folderlist[i], Image.FromStream(fs));
+                        }
                     }
                     loadingForm.Invoke(delegate {
                         loadingForm.SetProgress(i / (float)folderlist.Length);
@@ -301,6 +332,14 @@ Let Peter know if there are any missing features which would improve your workfl
                 string rest = assocline.Replace(elems[0], "").Trim();
                 assocs.Add(elems[0], rest);
             }
+            // load alpha
+            var alphalines = File.ReadAllLines("alpha.txt");
+            foreach (var alphaline in alphalines)
+            {
+                var elems = alphaline.Split(" ");
+                bool alpha = Boolean.Parse(elems[1]);
+                hasAlpha.Add(elems[0], alpha);
+            }
             // check output
             foreach (string folder in folderlist)
             {
@@ -316,6 +355,37 @@ Let Peter know if there are any missing features which would improve your workfl
                 }
                 hasRedraw.Add(folder, thisHasRedraw);
             }
+        }
+
+        private void buttonAlphaFix_Click(object sender, EventArgs e)
+        {
+            var fn = curFolder;
+            var images = Directory.EnumerateFiles(fn).Where(f => f.EndsWith(".png")).ToArray();
+            Array.Sort(images);
+
+            foreach (var image in images)
+            {
+                if (Path.GetFileNameWithoutExtension(image) == "output") continue;
+                if (Path.GetFileNameWithoutExtension(image).Contains("original")) continue;
+                FileStream fs = new FileStream(image, FileMode.Open);
+                Bitmap bitmap = new Bitmap(fs);
+                fs.Close();
+                for (int x = 0; x < bitmap.Width; x++)
+                {
+                    for (int y = 0; y < bitmap.Height; y++)
+                    {
+                        var p = bitmap.GetPixel(x, y);
+                        int alpha = p.A;
+                        int thresh = (int)numericUpDownVisualizeAlpha.Value;
+                        alpha = Math.Clamp((alpha - thresh) * (255 - thresh) / 255, 0, 255);
+                        bitmap.SetPixel(x, y, Color.FromArgb(alpha, p.R, p.G, p.B));
+                    }
+                }
+                File.Move(image, image + ".bak", true);
+                bitmap.Save(image);
+                bitmap.Dispose();
+            }
+            LoadFolder(curFolder);
         }
     }
 }

@@ -69,7 +69,11 @@ namespace ImageTool
             this.imageFn = imageFn;
             this.controller = controller;
             SharedInit();
-            image = Image.FromFile(imageFn);
+            // use filestream instead of Image.FromFile so the Image doesn't *hold the file handle* WTH MS
+            using (FileStream fs = new FileStream(imageFn, FileMode.Open))
+            {
+                image = Image.FromStream(fs);
+            }
             controller.AddImage(image);
             UpdateLabelText();
         }
@@ -440,6 +444,27 @@ namespace ImageTool
                     DrawRedrawRect(r, g, true);
                 }
             }
+            if (mainForm.checkBoxVisualizeAlpha.Checked)
+            {
+                Bitmap imgBmp = new Bitmap(outputImage);
+                Bitmap alphaBmp = new Bitmap(outputImage.Width, outputImage.Height);
+                for (int x = 0; x < outputImage.Width; x++)
+                {
+                    for (int y = 0; y < outputImage.Height; y++)
+                    {
+                        alphaBmp.SetPixel(x, y, Color.Transparent);
+                        var p = imgBmp.GetPixel(x, y);
+                        if (p.A > 0 && p.A < mainForm.numericUpDownVisualizeAlpha.Value)
+                        {
+                            alphaBmp.SetPixel(x, y, Color.Magenta);
+                        }
+                    }
+                }
+                using (Graphics g = Graphics.FromImage(outputImage))
+                {
+                    g.DrawImage(alphaBmp, 0, 0);
+                }
+            }
             mainForm.RefreshOutput();
         }
 
@@ -628,6 +653,14 @@ namespace ImageTool
                 redrawRects = outputSpec.RedrawRects;
                 RedrawOutputImage();
                 mainForm.Refresh();
+            }
+        }
+
+        internal void Dispose()
+        {
+            foreach(var imageView in imageViews)
+            {
+                imageView.image.Dispose();
             }
         }
     }

@@ -82,8 +82,14 @@ namespace ImageTool
                 e.Graphics.DrawString("🖌", emoFont, Brushes.DarkRed, stringRect, stringFormat);            
             }
 
+            if (mainForm.HasAlpha[folder])
+            {
+                stringRect.X = listBox.Width - 104;
+                e.Graphics.DrawString("☁️", emoFont, Brushes.Gray, stringRect, stringFormat);
+            }
+
             stringRect.X = (int)e.Graphics.MeasureString(folderList[e.Index], font).Width + 45;
-            stringRect.Width = listBox.Width - stringRect.X - 80;
+            stringRect.Width = listBox.Width - stringRect.X - 104;
             e.Graphics.DrawString(mainForm.Assocs[folder], smallFont, Brushes.Black, stringRect, stringFormat);
 
             var s = listBox.ItemHeight;
@@ -113,8 +119,18 @@ namespace ImageTool
             {
                 folderList = folderList.Where(f => !mainForm.HasRedraw[f]).ToArray();
             }
+            if (checkBoxFilterAlpha.CheckState == CheckState.Checked)
+            {
+                folderList = folderList.Where(f => mainForm.HasAlpha[f]).ToArray();
+            }
+            if (checkBoxFilterAlpha.CheckState == CheckState.Indeterminate)
+            {
+                folderList = folderList.Where(f => !mainForm.HasAlpha[f]).ToArray();
+            }
             listBox.Items.Clear();
             listBox.Items.AddRange(folderList);
+
+            Text = String.Format("Jump to Texture - {0} filtered", listBox.Items.Count);
         }
 
         private void listBox_Resize(object sender, EventArgs e)

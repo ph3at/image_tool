@@ -39,6 +39,7 @@
             this.buttonNavJump = new System.Windows.Forms.Button();
             this.buttonHelp = new System.Windows.Forms.Button();
             this.buttonClearOutput = new System.Windows.Forms.Button();
+            this.buttonAlphaFix = new System.Windows.Forms.Button();
             this.statusStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -72,7 +73,7 @@
             // buttonSaveOutput
             // 
             this.buttonSaveOutput.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.buttonSaveOutput.Location = new System.Drawing.Point(615, 3);
+            this.buttonSaveOutput.Location = new System.Drawing.Point(539, 3);
             this.buttonSaveOutput.Name = "buttonSaveOutput";
             this.buttonSaveOutput.Size = new System.Drawing.Size(81, 23);
             this.buttonSaveOutput.TabIndex = 3;
@@ -83,7 +84,7 @@
             // buttonLoadOutputSpec
             // 
             this.buttonLoadOutputSpec.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.buttonLoadOutputSpec.Location = new System.Drawing.Point(789, 3);
+            this.buttonLoadOutputSpec.Location = new System.Drawing.Point(713, 3);
             this.buttonLoadOutputSpec.Name = "buttonLoadOutputSpec";
             this.buttonLoadOutputSpec.Size = new System.Drawing.Size(123, 23);
             this.buttonLoadOutputSpec.TabIndex = 4;
@@ -114,7 +115,7 @@
             // buttonSaveAndNext
             // 
             this.buttonSaveAndNext.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.buttonSaveAndNext.Location = new System.Drawing.Point(702, 3);
+            this.buttonSaveAndNext.Location = new System.Drawing.Point(626, 3);
             this.buttonSaveAndNext.Name = "buttonSaveAndNext";
             this.buttonSaveAndNext.Size = new System.Drawing.Size(81, 23);
             this.buttonSaveAndNext.TabIndex = 7;
@@ -146,7 +147,7 @@
             // buttonClearOutput
             // 
             this.buttonClearOutput.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.buttonClearOutput.Location = new System.Drawing.Point(918, 3);
+            this.buttonClearOutput.Location = new System.Drawing.Point(842, 3);
             this.buttonClearOutput.Name = "buttonClearOutput";
             this.buttonClearOutput.Size = new System.Drawing.Size(106, 23);
             this.buttonClearOutput.TabIndex = 10;
@@ -154,11 +155,23 @@
             this.buttonClearOutput.UseVisualStyleBackColor = true;
             this.buttonClearOutput.Click += new System.EventHandler(this.buttonClearOutput_Click);
             // 
+            // buttonAlphaFix
+            // 
+            this.buttonAlphaFix.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.buttonAlphaFix.Location = new System.Drawing.Point(954, 3);
+            this.buttonAlphaFix.Name = "buttonAlphaFix";
+            this.buttonAlphaFix.Size = new System.Drawing.Size(144, 23);
+            this.buttonAlphaFix.TabIndex = 11;
+            this.buttonAlphaFix.Text = "Fix Alpha In Upscales [!]";
+            this.buttonAlphaFix.UseVisualStyleBackColor = true;
+            this.buttonAlphaFix.Click += new System.EventHandler(this.buttonAlphaFix_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1584, 761);
+            this.Controls.Add(this.buttonAlphaFix);
             this.Controls.Add(this.buttonClearOutput);
             this.Controls.Add(this.buttonHelp);
             this.Controls.Add(this.buttonNavJump);
@@ -196,5 +209,6 @@
         private Button buttonNavJump;
         private Button buttonHelp;
         private Button buttonClearOutput;
+        private Button buttonAlphaFix;
     }
 }
