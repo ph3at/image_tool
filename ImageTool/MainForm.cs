@@ -377,13 +377,33 @@ Let Peter know if there are any missing features which would improve your workfl
                         var p = bitmap.GetPixel(x, y);
                         int alpha = p.A;
                         int thresh = (int)numericUpDownVisualizeAlpha.Value;
-                        alpha = Math.Clamp((alpha - thresh) * (255 - thresh) / 255, 0, 255);
+                        alpha = Math.Clamp(Math.Clamp((alpha - thresh), 0, 255) * 255 / (255 - thresh - 1), 0, 255);
                         bitmap.SetPixel(x, y, Color.FromArgb(alpha, p.R, p.G, p.B));
                     }
                 }
-                File.Move(image, image + ".bak", true);
+                if (!File.Exists(image + ".bak"))
+                {
+                    File.Move(image, image + ".bak", true);
+                }
                 bitmap.Save(image);
                 bitmap.Dispose();
+            }
+            LoadFolder(curFolder);
+        }
+
+        private void buttonRestoreInputs_Click(object sender, EventArgs e)
+        {
+            var fn = curFolder;
+            var images = Directory.EnumerateFiles(fn).Where(f => f.EndsWith(".png")).ToArray();
+            Array.Sort(images);
+
+            foreach (var image in images)
+            {
+                if (File.Exists(image + ".bak"))
+                {
+                    File.Move(image + ".bak", image, true);
+                }
+
             }
             LoadFolder(curFolder);
         }

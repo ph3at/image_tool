@@ -40,6 +40,7 @@
             this.buttonHelp = new System.Windows.Forms.Button();
             this.buttonClearOutput = new System.Windows.Forms.Button();
             this.buttonAlphaFix = new System.Windows.Forms.Button();
+            this.buttonRestoreInputs = new System.Windows.Forms.Button();
             this.statusStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -73,7 +74,7 @@
             // buttonSaveOutput
             // 
             this.buttonSaveOutput.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.buttonSaveOutput.Location = new System.Drawing.Point(539, 3);
+            this.buttonSaveOutput.Location = new System.Drawing.Point(469, 3);
             this.buttonSaveOutput.Name = "buttonSaveOutput";
             this.buttonSaveOutput.Size = new System.Drawing.Size(81, 23);
             this.buttonSaveOutput.TabIndex = 3;
@@ -84,7 +85,7 @@
             // buttonLoadOutputSpec
             // 
             this.buttonLoadOutputSpec.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.buttonLoadOutputSpec.Location = new System.Drawing.Point(713, 3);
+            this.buttonLoadOutputSpec.Location = new System.Drawing.Point(643, 3);
             this.buttonLoadOutputSpec.Name = "buttonLoadOutputSpec";
             this.buttonLoadOutputSpec.Size = new System.Drawing.Size(123, 23);
             this.buttonLoadOutputSpec.TabIndex = 4;
@@ -115,7 +116,7 @@
             // buttonSaveAndNext
             // 
             this.buttonSaveAndNext.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.buttonSaveAndNext.Location = new System.Drawing.Point(626, 3);
+            this.buttonSaveAndNext.Location = new System.Drawing.Point(556, 3);
             this.buttonSaveAndNext.Name = "buttonSaveAndNext";
             this.buttonSaveAndNext.Size = new System.Drawing.Size(81, 23);
             this.buttonSaveAndNext.TabIndex = 7;
@@ -147,7 +148,7 @@
             // buttonClearOutput
             // 
             this.buttonClearOutput.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.buttonClearOutput.Location = new System.Drawing.Point(842, 3);
+            this.buttonClearOutput.Location = new System.Drawing.Point(772, 3);
             this.buttonClearOutput.Name = "buttonClearOutput";
             this.buttonClearOutput.Size = new System.Drawing.Size(106, 23);
             this.buttonClearOutput.TabIndex = 10;
@@ -158,7 +159,7 @@
             // buttonAlphaFix
             // 
             this.buttonAlphaFix.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.buttonAlphaFix.Location = new System.Drawing.Point(954, 3);
+            this.buttonAlphaFix.Location = new System.Drawing.Point(919, 3);
             this.buttonAlphaFix.Name = "buttonAlphaFix";
             this.buttonAlphaFix.Size = new System.Drawing.Size(144, 23);
             this.buttonAlphaFix.TabIndex = 11;
@@ -166,11 +167,23 @@
             this.buttonAlphaFix.UseVisualStyleBackColor = true;
             this.buttonAlphaFix.Click += new System.EventHandler(this.buttonAlphaFix_Click);
             // 
+            // buttonRestoreInputs
+            // 
+            this.buttonRestoreInputs.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.buttonRestoreInputs.Location = new System.Drawing.Point(1069, 3);
+            this.buttonRestoreInputs.Name = "buttonRestoreInputs";
+            this.buttonRestoreInputs.Size = new System.Drawing.Size(97, 23);
+            this.buttonRestoreInputs.TabIndex = 12;
+            this.buttonRestoreInputs.Text = "Restore Inputs";
+            this.buttonRestoreInputs.UseVisualStyleBackColor = true;
+            this.buttonRestoreInputs.Click += new System.EventHandler(this.buttonRestoreInputs_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1584, 761);
+            this.Controls.Add(this.buttonRestoreInputs);
             this.Controls.Add(this.buttonAlphaFix);
             this.Controls.Add(this.buttonClearOutput);
             this.Controls.Add(this.buttonHelp);
@@ -210,5 +223,6 @@
         private Button buttonHelp;
         private Button buttonClearOutput;
         private Button buttonAlphaFix;
+        private Button buttonRestoreInputs;
     }
 }
