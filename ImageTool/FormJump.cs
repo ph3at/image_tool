@@ -18,7 +18,7 @@ namespace ImageTool
         string[] rootFolderList;
         string[] folderList;
 
-        Font font, smallFont, emoFont;
+        Font font, nameFont, smallFont, emoFont;
 
         public FormJump(MainForm mainForm, string[] folderList, string selectedFolder)
         {
@@ -27,7 +27,8 @@ namespace ImageTool
             rootFolderList = folderList.Select(x => x.ToString()).ToArray();
             this.folderList = folderList;
 
-            font = new Font(Font.Name, 14);
+            font = new Font(Font.Name, 12);
+            nameFont = new Font(Font.Name, 10);
             smallFont = new Font(Font.Name, 7);
             emoFont = new Font("Segoe UI Emoji", 14);
 
@@ -69,17 +70,31 @@ namespace ImageTool
             var stringRect = e.Bounds;
             stringRect.X = 40;
             e.Graphics.TextRenderingHint = TextRenderingHint.AntiAlias;
-            e.Graphics.DrawString(folderList[e.Index], font, Brushes.Black, stringRect, stringFormat);
+            e.Graphics.DrawString(folder, font, Brushes.Black, stringRect, stringFormat);
+            stringRect.X += (int)e.Graphics.MeasureString(folder, font).Width + 5;
+            
+            // draw (original Falcom) texture name if available
+            if (mainForm.Names.ContainsKey(folder))
+            {
+                string name = mainForm.Names[folder];
+                e.Graphics.DrawString(name, nameFont, Brushes.Black, stringRect, stringFormat);
+                stringRect.X += (int)e.Graphics.MeasureString(name, nameFont).Width + 5;
+            }
 
-            if (mainForm.HasOutput[folder]) {
-                stringRect.X = listBox.Width-56;
+            stringRect.Width = listBox.Width - stringRect.X - 104;
+            e.Graphics.DrawString(mainForm.Assocs[folder], smallFont, Brushes.Black, stringRect, stringFormat);
+            stringRect.Width = e.Bounds.Width;
+
+            if (mainForm.HasOutput[folder])
+            {
+                stringRect.X = listBox.Width - 56;
                 e.Graphics.DrawString("☑", emoFont, Brushes.Black, stringRect, stringFormat);
             }
 
             if (mainForm.HasRedraw[folder])
             {
                 stringRect.X = listBox.Width - 80;
-                e.Graphics.DrawString("🖌", emoFont, Brushes.DarkRed, stringRect, stringFormat);            
+                e.Graphics.DrawString("🖌", emoFont, Brushes.DarkRed, stringRect, stringFormat);
             }
 
             if (mainForm.HasAlpha[folder])
@@ -88,20 +103,21 @@ namespace ImageTool
                 e.Graphics.DrawString("☁️", emoFont, Brushes.Gray, stringRect, stringFormat);
             }
 
-            stringRect.X = (int)e.Graphics.MeasureString(folderList[e.Index], font).Width + 45;
-            stringRect.Width = listBox.Width - stringRect.X - 104;
-            e.Graphics.DrawString(mainForm.Assocs[folder], smallFont, Brushes.Black, stringRect, stringFormat);
-
             var s = listBox.ItemHeight;
-            var img = mainForm.Thumbnails[folder];
-            var imgRect = new Rectangle(0, e.Bounds.Y, Math.Min(s*img.Width/img.Height, s), s);
-            e.Graphics.DrawImage(img,  imgRect);
+            if (mainForm.Thumbnails.ContainsKey(folder)) // if a thumbnail couldn't be generated for some reason, don't fail, just don't draw it
+            {
+                var img = mainForm.Thumbnails[folder];
+                var imgRect = new Rectangle(0, e.Bounds.Y, Math.Min(s * img.Width / img.Height, s), s);
+                e.Graphics.DrawImage(img, imgRect);
+            }
         }
 
         private void FilterChanged(object sender, EventArgs e)
         {
             folderList = rootFolderList.Where(f => 
-                f.Contains(textBoxFilter.Text) || (checkBoxSearchAssoc.Checked && mainForm.Assocs[f].Contains(textBoxFilter.Text))
+                f.Contains(textBoxFilter.Text) 
+                || (checkBoxSearchAssoc.Checked && mainForm.Assocs[f].Contains(textBoxFilter.Text))
+                || (checkBoxSearchNames.Checked && mainForm.Names[f].Contains(textBoxFilter.Text))
             ).ToArray();
             if (checkBoxFilterOutput.CheckState == CheckState.Checked)
             {

@@ -41,6 +41,7 @@
             this.checkBoxFilterRedraw = new System.Windows.Forms.CheckBox();
             this.buttonRefresh = new System.Windows.Forms.Button();
             this.checkBoxFilterAlpha = new System.Windows.Forms.CheckBox();
+            this.checkBoxSearchNames = new System.Windows.Forms.CheckBox();
             this.contextMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -50,7 +51,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxFilter.Location = new System.Drawing.Point(93, 12);
             this.textBoxFilter.Name = "textBoxFilter";
-            this.textBoxFilter.Size = new System.Drawing.Size(298, 23);
+            this.textBoxFilter.Size = new System.Drawing.Size(514, 23);
             this.textBoxFilter.TabIndex = 0;
             this.textBoxFilter.TextChanged += new System.EventHandler(this.FilterChanged);
             // 
@@ -71,10 +72,10 @@
             this.listBox.ContextMenuStrip = this.contextMenuStrip;
             this.listBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.listBox.ItemHeight = 40;
-            this.listBox.Location = new System.Drawing.Point(12, 66);
+            this.listBox.Location = new System.Drawing.Point(12, 106);
             this.listBox.Name = "listBox";
             this.listBox.ScrollAlwaysVisible = true;
-            this.listBox.Size = new System.Drawing.Size(595, 564);
+            this.listBox.Size = new System.Drawing.Size(595, 524);
             this.listBox.TabIndex = 2;
             this.listBox.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.listBox_DrawItem);
             this.listBox.DoubleClick += new System.EventHandler(this.listBox_DoubleClick);
@@ -123,7 +124,7 @@
             this.checkBoxSearchAssoc.AutoSize = true;
             this.checkBoxSearchAssoc.Checked = true;
             this.checkBoxSearchAssoc.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxSearchAssoc.Location = new System.Drawing.Point(405, 14);
+            this.checkBoxSearchAssoc.Location = new System.Drawing.Point(405, 41);
             this.checkBoxSearchAssoc.Name = "checkBoxSearchAssoc";
             this.checkBoxSearchAssoc.Size = new System.Drawing.Size(202, 19);
             this.checkBoxSearchAssoc.TabIndex = 5;
@@ -134,7 +135,7 @@
             // checkBoxFilterOutput
             // 
             this.checkBoxFilterOutput.AutoSize = true;
-            this.checkBoxFilterOutput.Location = new System.Drawing.Point(12, 41);
+            this.checkBoxFilterOutput.Location = new System.Drawing.Point(12, 80);
             this.checkBoxFilterOutput.Name = "checkBoxFilterOutput";
             this.checkBoxFilterOutput.Size = new System.Drawing.Size(131, 19);
             this.checkBoxFilterOutput.TabIndex = 6;
@@ -146,7 +147,7 @@
             // checkBoxFilterRedraw
             // 
             this.checkBoxFilterRedraw.AutoSize = true;
-            this.checkBoxFilterRedraw.Location = new System.Drawing.Point(149, 41);
+            this.checkBoxFilterRedraw.Location = new System.Drawing.Point(149, 80);
             this.checkBoxFilterRedraw.Name = "checkBoxFilterRedraw";
             this.checkBoxFilterRedraw.Size = new System.Drawing.Size(177, 19);
             this.checkBoxFilterRedraw.TabIndex = 7;
@@ -158,7 +159,7 @@
             // buttonRefresh
             // 
             this.buttonRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonRefresh.Location = new System.Drawing.Point(459, 38);
+            this.buttonRefresh.Location = new System.Drawing.Point(459, 77);
             this.buttonRefresh.Name = "buttonRefresh";
             this.buttonRefresh.Size = new System.Drawing.Size(148, 23);
             this.buttonRefresh.TabIndex = 8;
@@ -169,7 +170,7 @@
             // checkBoxFilterAlpha
             // 
             this.checkBoxFilterAlpha.AutoSize = true;
-            this.checkBoxFilterAlpha.Location = new System.Drawing.Point(332, 42);
+            this.checkBoxFilterAlpha.Location = new System.Drawing.Point(332, 81);
             this.checkBoxFilterAlpha.Name = "checkBoxFilterAlpha";
             this.checkBoxFilterAlpha.Size = new System.Drawing.Size(124, 19);
             this.checkBoxFilterAlpha.TabIndex = 9;
@@ -177,6 +178,18 @@
             this.checkBoxFilterAlpha.ThreeState = true;
             this.checkBoxFilterAlpha.UseVisualStyleBackColor = true;
             this.checkBoxFilterAlpha.CheckStateChanged += new System.EventHandler(this.FilterChanged);
+            // 
+            // checkBoxSearchNames
+            // 
+            this.checkBoxSearchNames.AutoSize = true;
+            this.checkBoxSearchNames.Checked = true;
+            this.checkBoxSearchNames.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxSearchNames.Location = new System.Drawing.Point(93, 41);
+            this.checkBoxSearchNames.Name = "checkBoxSearchNames";
+            this.checkBoxSearchNames.Size = new System.Drawing.Size(177, 19);
+            this.checkBoxSearchNames.TabIndex = 10;
+            this.checkBoxSearchNames.Text = "Also search in texture names";
+            this.checkBoxSearchNames.UseVisualStyleBackColor = true;
             // 
             // FormJump
             // 
@@ -186,6 +199,7 @@
             this.CancelButton = this.buttonCancel;
             this.ClientSize = new System.Drawing.Size(619, 661);
             this.ControlBox = false;
+            this.Controls.Add(this.checkBoxSearchNames);
             this.Controls.Add(this.checkBoxFilterAlpha);
             this.Controls.Add(this.buttonRefresh);
             this.Controls.Add(this.checkBoxFilterRedraw);
@@ -218,5 +232,6 @@
         private ToolStripMenuItem toolStripMenuItemOpenFolder;
         private Button buttonRefresh;
         private CheckBox checkBoxFilterAlpha;
+        private CheckBox checkBoxSearchNames;
     }
 }

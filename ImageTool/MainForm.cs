@@ -7,6 +7,7 @@ namespace ImageTool
         string[] folderlist;
         Dictionary<string, Image> thumbnails = new Dictionary<string, Image>();
         Dictionary<string, string> assocs = new Dictionary<string, string>();
+        Dictionary<string, string> names = new Dictionary<string, string>();
         Dictionary<string, bool> hasAlpha = new Dictionary<string, bool>();
         Dictionary<string, bool> hasOutput = new Dictionary<string, bool>();
         Dictionary<string, bool> hasRedraw = new Dictionary<string, bool>();
@@ -24,6 +25,7 @@ namespace ImageTool
 
         public Dictionary<string, Image> Thumbnails { get => thumbnails; }
         public Dictionary<string, string> Assocs { get => assocs; }
+        public Dictionary<string, string> Names { get => names; }
         public Dictionary<string, bool> HasOutput { get => hasOutput; }
         public Dictionary<string, bool> HasRedraw { get => hasRedraw; }
         public Dictionary<string, bool> HasAlpha { get => hasAlpha; }
@@ -198,6 +200,7 @@ namespace ImageTool
         private void buttonNavJump_Click(object sender, EventArgs e)
         {
             jumpForm.Show();
+            jumpForm.BringToFront();
         }
 
         private void buttonSaveOutput_Click(object sender, EventArgs e)
@@ -321,6 +324,7 @@ Let Peter know if there are any missing features which would improve your workfl
         internal void ReloadMetainformation()
         {
             assocs.Clear();
+            names.Clear();
             hasOutput.Clear();
             hasRedraw.Clear();
 
@@ -331,6 +335,13 @@ Let Peter know if there are any missing features which would improve your workfl
                 var elems = assocline.Split(" ");
                 string rest = assocline.Replace(elems[0], "").Trim();
                 assocs.Add(elems[0], rest);
+            }
+            // load names
+            var namelines = File.ReadAllLines("names.txt");
+            foreach (var nameline in namelines)
+            {
+                var elems = nameline.Split(" ");
+                names.Add(elems[0], elems[1]);
             }
             // load alpha
             var alphalines = File.ReadAllLines("alpha.txt");
