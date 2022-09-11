@@ -11,12 +11,14 @@ namespace ImageTool
         private string exePath = "..\\picview.exe";
         private string parameters = "/filetype itp /SubCategory bc7 /MipMap 99 /SetTexSize 0 /AutoQuit 1";
         private const string fileOptions = "/srcpath \"{0}\" /destpath \"{1}\" ";
+        private bool autoSave = true;
 
         private string outputPath = "..\\itp_output";
 
         public string ExePath { get { return exePath; } }
         public string Parameters { get { return parameters; } }
         public string OutputPath { get { return outputPath; } }
+        public bool AutoSave { get { return autoSave; } }
 
 
         static private string GetSavePath()
@@ -28,7 +30,7 @@ namespace ImageTool
 
         private void Save()
         {
-            string outTxt = exePath + "\n" + parameters + "\n" + outputPath;
+            string outTxt = exePath + "\n" + parameters + "\n" + outputPath + "\n" + autoSave.ToString();
             File.WriteAllText(GetSavePath(), outTxt);
         }
         public void Load()
@@ -39,14 +41,16 @@ namespace ImageTool
                 exePath = lines[0];
                 parameters = lines[1];
                 outputPath = lines[2];
+                autoSave = bool.Parse(lines[3]);
             } catch { } // if loading options fails we just stick with defaults
         }
 
-        public void ApplyAndSave(string exePath, string parameters, string outputPath)
+        public void ApplyAndSave(string exePath, string parameters, string outputPath, bool autoSave)
         {
             this.exePath = exePath;
             this.parameters = parameters;
             this.outputPath = outputPath;
+            this.autoSave = autoSave;
             Save();
         }
 

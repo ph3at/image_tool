@@ -37,6 +37,7 @@
             this.buttonCurImage = new System.Windows.Forms.Button();
             this.buttonSaveSettings = new System.Windows.Forms.Button();
             this.buttonStoreAll = new System.Windows.Forms.Button();
+            this.checkBoxAutoStore = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // labelExe
@@ -107,7 +108,7 @@
             // buttonSaveSettings
             // 
             this.buttonSaveSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonSaveSettings.Location = new System.Drawing.Point(463, 96);
+            this.buttonSaveSettings.Location = new System.Drawing.Point(463, 121);
             this.buttonSaveSettings.Name = "buttonSaveSettings";
             this.buttonSaveSettings.Size = new System.Drawing.Size(170, 23);
             this.buttonSaveSettings.TabIndex = 10;
@@ -126,11 +127,22 @@
             this.buttonStoreAll.UseVisualStyleBackColor = true;
             this.buttonStoreAll.Click += new System.EventHandler(this.buttonStoreAll_Click);
             // 
+            // checkBoxAutoStore
+            // 
+            this.checkBoxAutoStore.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkBoxAutoStore.AutoSize = true;
+            this.checkBoxAutoStore.Location = new System.Drawing.Point(302, 96);
+            this.checkBoxAutoStore.Name = "checkBoxAutoStore";
+            this.checkBoxAutoStore.Size = new System.Drawing.Size(331, 19);
+            this.checkBoxAutoStore.TabIndex = 11;
+            this.checkBoxAutoStore.Text = "Automatically store to ITP when saving new output image";
+            // 
             // ITPForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(645, 196);
+            this.Controls.Add(this.checkBoxAutoStore);
             this.Controls.Add(this.buttonStoreAll);
             this.Controls.Add(this.buttonSaveSettings);
             this.Controls.Add(this.buttonCurImage);
@@ -159,5 +171,6 @@
         private Button buttonCurImage;
         private Button buttonSaveSettings;
         private Button buttonStoreAll;
+        private CheckBox checkBoxAutoStore;
     }
 }

@@ -221,6 +221,12 @@ namespace ImageTool
         private void buttonSaveOutput_Click(object sender, EventArgs e)
         {
             controller.SaveOutput(curFolder);
+
+            if (itpOptions.AutoSave)
+            {
+                itpForm.SaveCurImgToITP();
+            }
+
             hasOutput[curFolder] = true;
             hasRedraw[curFolder] = controller.HasRedrawRects;
             jumpForm.Refresh();

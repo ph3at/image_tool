@@ -26,11 +26,12 @@ namespace ImageTool
             textBoxExe.Text = options.ExePath;
             textBoxOptions.Text = options.Parameters;
             textBoxOutput.Text = options.OutputPath;
+            checkBoxAutoStore.Checked = options.AutoSave;
         }
 
         private void buttonSaveSettings_Click(object sender, EventArgs e)
         {
-            options.ApplyAndSave(textBoxExe.Text, textBoxOptions.Text, textBoxOutput.Text);
+            options.ApplyAndSave(textBoxExe.Text, textBoxOptions.Text, textBoxOutput.Text, checkBoxAutoStore.Checked);
         }
 
         private void RunPicView(string infn, string outfn)
@@ -54,7 +55,7 @@ namespace ImageTool
             return String.Format("{0}/{1}_{2}.{3}", path, id, mainForm.Names[id], extension);
         }
 
-        private void buttonCurImage_Click(object sender, EventArgs e)
+        public void SaveCurImgToITP()
         {
             Directory.CreateDirectory(options.OutputPath);
 
@@ -63,6 +64,11 @@ namespace ImageTool
             string itpfn = BuildFullFn(options.OutputPath, id);
 
             RunPicView(pngfn, itpfn);
+        }
+
+        private void buttonCurImage_Click(object sender, EventArgs e)
+        {
+            SaveCurImgToITP();
         }
 
         public static void EmptyDir(string path)

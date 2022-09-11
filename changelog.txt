@@ -1,5 +1,5 @@
-Version 0.9
------------
+PH3 ImageTool Version 0.9
+-------------------------
 
 - Add support for ITP generation
 - Add support for original Falcom texture names
