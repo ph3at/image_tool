@@ -28,7 +28,7 @@ namespace ImageTool
             this.folderList = folderList;
 
             font = new Font(Font.Name, 12);
-            nameFont = new Font(Font.Name, 10);
+            nameFont = new Font(Font.Name, 10, FontStyle.Bold);
             smallFont = new Font(Font.Name, 7);
             emoFont = new Font("Segoe UI Emoji", 14);
 

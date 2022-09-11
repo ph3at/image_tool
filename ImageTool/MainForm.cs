@@ -17,6 +17,9 @@ namespace ImageTool
         ImageView? outputView;
         FormJump jumpForm;
 
+        ITPOptions itpOptions = new ITPOptions();
+        ITPForm itpForm;
+
         internal CheckBox checkBoxRepeatTexture;
         internal CheckBox checkBoxMirrorTexture;
         internal CheckBox checkBoxShowSelectionsOnOtherImages;
@@ -29,6 +32,9 @@ namespace ImageTool
         public Dictionary<string, bool> HasOutput { get => hasOutput; }
         public Dictionary<string, bool> HasRedraw { get => hasRedraw; }
         public Dictionary<string, bool> HasAlpha { get => hasAlpha; }
+
+        public string CurFolder { get { return curFolder; } }
+        public string[] FolderList { get { return folderlist; } }
 
         public MainForm(string[] folderlist)
         {
@@ -102,6 +108,9 @@ namespace ImageTool
 
             this.folderlist = folderlist;
             curFolder = "";
+
+            itpOptions.Load();
+            itpForm = new ITPForm(this, itpOptions);
 
             // just to silence warning
             jumpForm = new FormJump(this, folderlist, "");
@@ -201,6 +210,12 @@ namespace ImageTool
         {
             jumpForm.Show();
             jumpForm.BringToFront();
+        }
+
+        private void buttonITP_Click(object sender, EventArgs e)
+        {
+            itpForm.Show();
+            itpForm.BringToFront();
         }
 
         private void buttonSaveOutput_Click(object sender, EventArgs e)
@@ -354,13 +369,13 @@ Let Peter know if there are any missing features which would improve your workfl
             // check output
             foreach (string folder in folderlist)
             {
-                var specfn = controller.GetOutputSpecFn(folder);
+                var specfn = ImageController.GetOutputSpecFn(folder);
                 bool hasSpec = File.Exists(specfn);
                 hasOutput.Add(folder, hasSpec);
                 bool thisHasRedraw = false;
                 if (hasSpec)
                 {
-                    var jsonString = File.ReadAllText(controller.GetOutputSpecFn(folder));
+                    var jsonString = File.ReadAllText(ImageController.GetOutputSpecFn(folder));
                     var outputSpec = JsonSerializer.Deserialize<OutputSpec>(jsonString);
                     thisHasRedraw = outputSpec.RedrawRects.Count > 0;
                 }

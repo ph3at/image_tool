@@ -571,11 +571,11 @@ namespace ImageTool
             mainForm.Refresh();
         }
 
-        internal string GetOutputSpecFn(string folder)
+        internal static string GetOutputSpecFn(string folder)
         {
             return folder + "/output_spec.json";
         }
-        internal string GetOutputImgFn(string folder)
+        internal static string GetOutputImgFn(string folder)
         {
             return folder + "/output.png";
         }

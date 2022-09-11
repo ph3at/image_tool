@@ -41,6 +41,7 @@
             this.buttonClearOutput = new System.Windows.Forms.Button();
             this.buttonAlphaFix = new System.Windows.Forms.Button();
             this.buttonRestoreInputs = new System.Windows.Forms.Button();
+            this.buttonITP = new System.Windows.Forms.Button();
             this.statusStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -178,11 +179,22 @@
             this.buttonRestoreInputs.UseVisualStyleBackColor = true;
             this.buttonRestoreInputs.Click += new System.EventHandler(this.buttonRestoreInputs_Click);
             // 
+            // buttonITP
+            // 
+            this.buttonITP.Location = new System.Drawing.Point(263, 3);
+            this.buttonITP.Name = "buttonITP";
+            this.buttonITP.Size = new System.Drawing.Size(96, 23);
+            this.buttonITP.TabIndex = 13;
+            this.buttonITP.Text = "ITP Handling";
+            this.buttonITP.UseVisualStyleBackColor = true;
+            this.buttonITP.Click += new System.EventHandler(this.buttonITP_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1584, 761);
+            this.Controls.Add(this.buttonITP);
             this.Controls.Add(this.buttonRestoreInputs);
             this.Controls.Add(this.buttonAlphaFix);
             this.Controls.Add(this.buttonClearOutput);
@@ -224,5 +236,6 @@
         private Button buttonClearOutput;
         private Button buttonAlphaFix;
         private Button buttonRestoreInputs;
+        private Button buttonITP;
     }
 }
