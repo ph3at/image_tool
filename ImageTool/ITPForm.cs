@@ -100,5 +100,11 @@ namespace ImageTool
 
             Cursor.Current = cursor;
         }
+
+        private void ITPForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            this.Hide();
+            e.Cancel = true; // this cancels the close event, preventign dispose
+        }
     }
 }

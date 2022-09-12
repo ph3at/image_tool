@@ -155,6 +155,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "ITPForm";
             this.Text = "ITP Handling";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ITPForm_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
 

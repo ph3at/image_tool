@@ -1,6 +1,9 @@
+PH3 ImageTool Version 0.9.1
+---------------------------
+- Fix crash on reopening ITP window
+
 PH3 ImageTool Version 0.9
 -------------------------
-
 - Add support for ITP generation
 - Add support for original Falcom texture names
   * loaded from "names.txt", can be used in jump navigation

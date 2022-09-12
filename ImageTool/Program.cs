@@ -2,7 +2,7 @@ namespace ImageTool
 {
     internal static class Program
     {
-        public readonly static string VERSION = "0.9";
+        public readonly static string VERSION = "0.9.1";
 
         /// <summary>
         ///  The main entry point for the application.
