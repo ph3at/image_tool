@@ -1,4 +1,17 @@
-﻿using System;
+﻿// Option handling (including load/store) for post processing.
+//
+// Copyright(C) 2022 Peter Thoman / PH3 GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,14 +19,12 @@ using System.Threading.Tasks;
 
 namespace ImageTool
 {
-    internal class ITPOptions
+    internal class PostProcOptions
     {
         private string exePath = "..\\picview.exe";
-        private string parameters = "/filetype itp /SubCategory bc7 /MipMap 99 /SetTexSize 0 /AutoQuit 1";
-        private const string fileOptions = "/srcpath \"{0}\" /destpath \"{1}\" ";
-        private bool autoSave = true;
-
+        private string parameters = "/srcpath \"{0}\" /destpath \"{1}\" /filetype itp /SubCategory bc7 /MipMap 99 /SetTexSize 0 /AutoQuit 1";
         private string outputPath = "..\\itp_output";
+        private bool autoSave = false;
 
         public string ExePath { get { return exePath; } }
         public string Parameters { get { return parameters; } }
@@ -56,8 +67,7 @@ namespace ImageTool
 
         internal string BuildArgs(string pngfn, string itpfn)
         {
-            string fileParms = String.Format(fileOptions, pngfn, itpfn);
-            return fileParms + parameters;
+            return String.Format(parameters, pngfn, itpfn);
         }
     }
 }

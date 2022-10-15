@@ -183,9 +183,9 @@
             // 
             this.buttonITP.Location = new System.Drawing.Point(263, 3);
             this.buttonITP.Name = "buttonITP";
-            this.buttonITP.Size = new System.Drawing.Size(96, 23);
+            this.buttonITP.Size = new System.Drawing.Size(103, 23);
             this.buttonITP.TabIndex = 13;
-            this.buttonITP.Text = "ITP Handling";
+            this.buttonITP.Text = "Postprocessing";
             this.buttonITP.UseVisualStyleBackColor = true;
             this.buttonITP.Click += new System.EventHandler(this.buttonITP_Click);
             // 

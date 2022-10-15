@@ -1,3 +1,16 @@
+// The main form code for PH3 ImageTool
+//
+// Copyright(C) 2022 Peter Thoman / PH3 GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
 using System.Text.Json;
 
 namespace ImageTool
@@ -17,8 +30,8 @@ namespace ImageTool
         ImageView? outputView;
         FormJump jumpForm;
 
-        ITPOptions itpOptions = new ITPOptions();
-        ITPForm itpForm;
+        PostProcOptions itpOptions = new PostProcOptions();
+        PostProcForm itpForm;
 
         internal CheckBox checkBoxRepeatTexture;
         internal CheckBox checkBoxMirrorTexture;
@@ -110,7 +123,7 @@ namespace ImageTool
             curFolder = "";
 
             itpOptions.Load();
-            itpForm = new ITPForm(this, itpOptions);
+            itpForm = new PostProcForm(this, itpOptions);
 
             // just to silence warning
             jumpForm = new FormJump(this, folderlist, "");
@@ -260,7 +273,8 @@ LMB drag - pan images
 Wheel - zoom (centered on cursor)
 RMB drag - define selection area from this source
 MMB drag - define redraw area
-RMB/MMB click - delete respective areas
+RMB/MMB click - delete respective 
+LMB double click - select baseline source
 
 Controls - Keyboard:
 Left/Right - Navigate prev/next textures
@@ -268,7 +282,8 @@ Ctrl+F - Jump to texture
 Ctrl+S - Save output
 Ctrl+Space - Save & next
 
-Let Peter know if there are any missing features which would improve your workflow.";
+Let us know if there are any missing features which would improve your workflow.
+https://github.com/ph3at/image_tool";
             MessageBox.Show(string.Format(text, Program.VERSION), "PH3 Imagetool", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
@@ -317,11 +332,7 @@ Let Peter know if there are any missing features which would improve your workfl
                     var imgfn = folderlist[i] + "/original_psp.png";
                     if (File.Exists(imgfn))
                     {
-                        // use filestream instead of Image.FromFile so the Image doesn't *hold the file handle* WTH MS
-                        using (FileStream fs = new FileStream(imgfn, FileMode.Open))
-                        {
-                            thumbnails.Add(folderlist[i], Image.FromStream(fs));
-                        }
+                        thumbnails.Add(folderlist[i], Program.ReadImageFromFile(imgfn));
                     }
                     loadingForm.Invoke(delegate {
                         loadingForm.SetProgress(i / (float)folderlist.Length);

@@ -1,6 +1,6 @@
 ﻿namespace ImageTool
 {
-    partial class ITPForm
+    partial class PostProcForm
     {
         /// <summary>
         /// Required designer variable.
@@ -46,7 +46,7 @@
             this.labelExe.Name = "labelExe";
             this.labelExe.Size = new System.Drawing.Size(157, 23);
             this.labelExe.TabIndex = 3;
-            this.labelExe.Text = "PicView Executable Path:";
+            this.labelExe.Text = "Executable Path:";
             this.labelExe.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // textBoxExe
@@ -64,7 +64,7 @@
             this.labelOptions.Name = "labelOptions";
             this.labelOptions.Size = new System.Drawing.Size(157, 23);
             this.labelOptions.TabIndex = 5;
-            this.labelOptions.Text = "PicView Options:";
+            this.labelOptions.Text = "Parameters:";
             this.labelOptions.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // textBoxOptions
@@ -97,11 +97,11 @@
             // buttonCurImage
             // 
             this.buttonCurImage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonCurImage.Location = new System.Drawing.Point(463, 163);
+            this.buttonCurImage.Location = new System.Drawing.Point(408, 163);
             this.buttonCurImage.Name = "buttonCurImage";
-            this.buttonCurImage.Size = new System.Drawing.Size(170, 23);
+            this.buttonCurImage.Size = new System.Drawing.Size(225, 23);
             this.buttonCurImage.TabIndex = 0;
-            this.buttonCurImage.Text = "Store Current Output to ITP";
+            this.buttonCurImage.Text = "Run postprocessing on current output";
             this.buttonCurImage.UseVisualStyleBackColor = true;
             this.buttonCurImage.Click += new System.EventHandler(this.buttonCurImage_Click);
             // 
@@ -121,9 +121,9 @@
             this.buttonStoreAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonStoreAll.Location = new System.Drawing.Point(12, 161);
             this.buttonStoreAll.Name = "buttonStoreAll";
-            this.buttonStoreAll.Size = new System.Drawing.Size(280, 23);
+            this.buttonStoreAll.Size = new System.Drawing.Size(252, 23);
             this.buttonStoreAll.TabIndex = 1;
-            this.buttonStoreAll.Text = "Store all available outputs to ITP (Slow!)";
+            this.buttonStoreAll.Text = "Run postprocessing on all outputs (Slow!)";
             this.buttonStoreAll.UseVisualStyleBackColor = true;
             this.buttonStoreAll.Click += new System.EventHandler(this.buttonStoreAll_Click);
             // 
@@ -131,13 +131,13 @@
             // 
             this.checkBoxAutoStore.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBoxAutoStore.AutoSize = true;
-            this.checkBoxAutoStore.Location = new System.Drawing.Point(302, 96);
+            this.checkBoxAutoStore.Location = new System.Drawing.Point(260, 96);
             this.checkBoxAutoStore.Name = "checkBoxAutoStore";
-            this.checkBoxAutoStore.Size = new System.Drawing.Size(331, 19);
+            this.checkBoxAutoStore.Size = new System.Drawing.Size(373, 19);
             this.checkBoxAutoStore.TabIndex = 11;
-            this.checkBoxAutoStore.Text = "Automatically store to ITP when saving new output image";
+            this.checkBoxAutoStore.Text = "Automatically run postprocessing when saving new output image";
             // 
-            // ITPForm
+            // PostProcForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -153,8 +153,8 @@
             this.Controls.Add(this.labelExe);
             this.Controls.Add(this.textBoxExe);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
-            this.Name = "ITPForm";
-            this.Text = "ITP Handling";
+            this.Name = "PostProcForm";
+            this.Text = "Output Postprocessing";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ITPForm_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();

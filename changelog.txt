@@ -1,3 +1,9 @@
+PH3 ImageTool Version 1.0.0
+---------------------------
+- Fix image mirroring issue related to stream loading
+- Rework to generic postprocessing 
+- Add license and basic documentation
+
 PH3 ImageTool Version 0.9.1
 ---------------------------
 - Fix crash on reopening ITP window
@@ -5,7 +11,7 @@ PH3 ImageTool Version 0.9.1
 PH3 ImageTool Version 0.9
 -------------------------
 - Add support for ITP generation
-- Add support for original Falcom texture names
+- Add support for original texture names
   * loaded from "names.txt", can be used in jump navigation
 - Better error handling in thumbnail generation
 - Texture navigation comes to front when clicked when already open

@@ -1,4 +1,17 @@
-﻿using System;
+﻿// Form for the user to set options related to post processing.
+//
+// Copyright(C) 2022 Peter Thoman / PH3 GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,12 +25,12 @@ using System.Xml.Linq;
 
 namespace ImageTool
 {
-    public partial class ITPForm : Form
+    public partial class PostProcForm : Form
     {
         MainForm mainForm;
-        ITPOptions options;
+        PostProcOptions options;
 
-        internal ITPForm(MainForm mainForm, ITPOptions itpOptions)
+        internal PostProcForm(MainForm mainForm, PostProcOptions itpOptions)
         {
             InitializeComponent();
             this.mainForm = mainForm;
@@ -104,7 +117,7 @@ namespace ImageTool
         private void ITPForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             this.Hide();
-            e.Cancel = true; // this cancels the close event, preventign dispose
+            e.Cancel = true; // this cancels the close event, preventing dispose
         }
     }
 }

@@ -1,4 +1,17 @@
-﻿using System.Data;
+﻿// The ImageView handles drawing of and interaction with in any of the image panes.
+//
+// Copyright(C) 2022 Peter Thoman / PH3 GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+using System.Data;
 using System.Reflection;
 using System.Text.Json;
 
@@ -69,11 +82,7 @@ namespace ImageTool
             this.imageFn = imageFn;
             this.controller = controller;
             SharedInit();
-            // use filestream instead of Image.FromFile so the Image doesn't *hold the file handle* WTH MS
-            using (FileStream fs = new FileStream(imageFn, FileMode.Open))
-            {
-                image = Image.FromStream(fs);
-            }
+            image = Program.ReadImageFromFile(imageFn);
             controller.AddImage(image);
             UpdateLabelText();
         }
